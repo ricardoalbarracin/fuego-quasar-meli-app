@@ -88,6 +88,8 @@ La capa `core` es el núcleo de la aplicación, donde se encuentra la lógica de
     - `triangulationService.go`: Define la interfaz para el servicio de triangulación.
 
 #### 2.1.2 `infrastructure/`
+![Arquitectura del Infraestructura del Proyecto](img/infraestructura.png?raw=true "Diagrama de la arquitectura core del proyecto")
+*Diagrama de la arquitectura infraestructura del proyecto*
 
 La capa `infrastructure` contiene las implementaciones que interactúan con sistemas externos, como bases de datos y servicios externos.
 
