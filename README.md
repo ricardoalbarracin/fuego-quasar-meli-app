@@ -4,6 +4,14 @@ This is a sample template for fuego-quasar-meli-app - Below is a brief explanati
 
 ```bash
 
+.
+├── Makefile                    <-- Make to automate build
+├── README.md                   <-- This instructions file
+├── hello-world                 <-- Source code for a lambda function
+│   ├── main.go                 <-- Lambda function code
+│   └── main_test.go            <-- Unit tests
+└── template.yaml
+```
 # fuego-quasar-app
 
 * [internal/](./fuego-quasar-app/internal)
@@ -45,14 +53,7 @@ This is a sample template for fuego-quasar-meli-app - Below is a brief explanati
 * [go.sum](./fuego-quasar-app/go.sum)
 * [main.go](./fuego-quasar-app/main.go)
 * [main_test.go](./fuego-quasar-app/main_test.go)
-.
-├── Makefile                    <-- Make to automate build
-├── README.md                   <-- This instructions file
-├── hello-world                 <-- Source code for a lambda function
-│   ├── main.go                 <-- Lambda function code
-│   └── main_test.go            <-- Unit tests
-└── template.yaml
-```
+
 
 ## Requirements
 
