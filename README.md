@@ -96,11 +96,12 @@ La capa `infrastructure` contiene las implementaciones que interactúan con sist
   - `wire.go`: Define las dependencias e implementaciones necesarias utilizando el framework Wire.
   - `wire_gen.go`: Archivo generado automáticamente por Wire que contiene el código para la inyección de dependencias.
 
-- **`mongodb/`**: Contiene la configuración y las implementaciones relacionadas con la base de datos MongoDB.
-  - `mongoClient.go`: Configura y proporciona el cliente para interactuar con MongoDB.
+
+- **`mongodb/`**: Contiene la configuración y las implementaciones relacionadas con la base de datos **MongoDB**.
+  - `mongoClient.go`: Configura y proporciona el cliente para interactuar con **MongoDB**.
 
 - **`repository/`**: Implementaciones de los repositorios que interactúan con los sistemas de almacenamiento de datos.
-  - `satelliteRepositoryMongo.go`: Implementa la interfaz del repositorio de satélites utilizando MongoDB como sistema de almacenamiento.
+  - `satelliteRepositoryMongo.go`: Implementa la interfaz del repositorio de satélites utilizando **MongoDB** como sistema de almacenamiento.
 
 #### 2.1.3 `interfaces/`
 
@@ -116,7 +117,48 @@ Contiene las pruebas unitarias para asegurar que la lógica de la aplicación fu
 - `decodeMessageService_test.go`: Pruebas unitarias para el servicio de decodificación de mensajes.
 - `triangulationService_test.go`: Pruebas unitarias para el servicio de triangulación.
 
+### 2.3 Inyección de dependencias co Wire
 
+Wire es una herramienta para la inyección de dependencias en Go, creada por Google. Facilita la configuración automática de dependencias y la gestión de la inyección de dependencias en proyectos complejos. Aquí se describe cómo se integra Wire en el proyecto:
+
+- **`wire.go`**: Este archivo define los proveedores y las dependencias necesarias para el proyecto. Utiliza las anotaciones de Wire para especificar cómo se deben construir y conectar las dependencias. Este archivo debe contener funciones que definan la creación de los objetos y su configuración.
+
+- **`wire_gen.go`**: Archivo generado automáticamente por Wire. Contiene el código que Wire genera en base a las configuraciones de `wire.go`. No debes modificar este archivo manualmente; Wire lo actualiza cuando ejecutas el comando de generación.
+
+#### 2.3.1  Ejemplo de Uso de Wire
+
+##### 2.3.1.1 **Definir Proveedores en `wire.go`**:
+
+   ```go
+   ///go:build wireinject
+// +build wireinject
+
+package di
+
+import (
+	"fuego-quasar-app/internal/core/application/service"
+	"fuego-quasar-app/internal/infrastructure/awsSecret"
+	"fuego-quasar-app/internal/infrastructure/mongodb"
+	"fuego-quasar-app/internal/infrastructure/repository"
+	"fuego-quasar-app/internal/interfaces/handler"
+
+	"github.com/google/wire"
+)
+
+func InitializeMyService() handler.LambdaHandler {
+	wire.Build(awsSecret.NewAWSSecretManagerService, mongodb.NewMongoClient, repository.NewSatelliteRepositoryMongo, handler.NewLambdaHandler, service.NewTriangulationService, service.NewDecodeMessageService, service.NewFuegoQuasarService)
+	return handler.LambdaHandler{}
+}
+
+   ```
+##### 2.3.1.2 Generar el Código de Inyección de Dependencias:
+
+Ejecuta el siguiente comando para generar el archivo wire_gen.go:
+
+```go
+wire ./internal/infrastructure/di
+```
+Esta integración con Wire ayuda a simplificar la gestión de dependencias y mejora la mantenibilidad del código en proyectos grandes.
 
 ## 3. Configuración de AWS SAM
 
@@ -153,13 +195,16 @@ Resources:
 ```
 ### 3.2. Variables de Entorno
 Estas son las variables de entorno que usa la app para su correcto funcionamiento.
-- **`CONNECTION_SECRET_NAME: prod/connectionstringfuegoquasardb`** cadena con el nombre del secreto que tiene la cadena de conexion a mongoDB
+- **`CONNECTION_SECRET_NAME: prod/connectionstringfuegoquasardb`** cadena con el nombre del secreto que tiene la cadena de conexion a **MongoDB**
 - **`KENOBI_X: -500`** posicion X del satelite kenobi
 - **`KENOBI_Y: -200`** posicion Y del satelite kenobi
 - **`SKYWALKER_X: 100`** posicion X del satelite skywalker
 - **`SKYWALKER_Y: -100`** posicion Y del satelite skywalker
 - **`SATO_X: 500`** posicion X del satelite sato
 - **`SATO_Y: 100`** posicion Y del satelite sato
+
+
+
 
 ### 3.3. Despliegue con AWS SAM
 
