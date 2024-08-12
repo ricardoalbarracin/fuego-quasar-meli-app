@@ -152,8 +152,14 @@ Resources:
             Method: post
 ```
 ### 3.2. Variables de Entorno
-
-- **`CONNECTION_STRING_SETTING`**: Cadena de conexión para la base de datos MongoDB. Este valor se puede configurar en el archivo `template.yaml` bajo la sección `Environment`.
+Estas son las variables de entorno que usa la app para su correcto funcionamiento.
+- **`CONNECTION_SECRET_NAME: prod/connectionstringfuegoquasardb`** cadena con el nombre del secreto que tiene la cadena de conexion a mongoDB
+- **`KENOBI_X: -500`** posicion X del satelite kenobi
+- **`KENOBI_Y: -200`** posicion Y del satelite kenobi
+- **`SKYWALKER_X: 100`** posicion X del satelite skywalker
+- **`SKYWALKER_Y: -100`** posicion Y del satelite skywalker
+- **`SATO_X: 500`** posicion X del satelite sato
+- **`SATO_Y: 100`** posicion Y del satelite sato
 
 ### 3.3. Despliegue con AWS SAM
 
@@ -171,15 +177,7 @@ sam build
 ```
 Este comando te guiará a través del proceso de despliegue, donde deberás proporcionar un nombre para el stack de CloudFormation y otros parámetros de configuración.
 
-### 3.4. Variables de Entorno en AWS
 
-Es importante definir correctamente las variables de entorno en el archivo `template.yaml`. Aquí tienes un ejemplo de cómo puedes definir una variable de entorno en el archivo `template.yaml`:
-
-```yaml
-Environment:
-  Variables:
-    CONNECTION_STRING_SETTING: "prod/conectionstringfuegoquasardb"
-```
 ## 4. Ejemplos de Uso
 
 ### 4.1. Invocar la Función Lambda
