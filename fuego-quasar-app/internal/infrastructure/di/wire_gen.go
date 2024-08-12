@@ -8,6 +8,9 @@ package di
 
 import (
 	"fuego-quasar-app/internal/core/application/service"
+	"fuego-quasar-app/internal/infrastructure/awsSecret"
+	"fuego-quasar-app/internal/infrastructure/mongodb"
+	"fuego-quasar-app/internal/infrastructure/repository"
 	"fuego-quasar-app/internal/interfaces/handler"
 )
 
@@ -15,6 +18,11 @@ import (
 
 func InitializeMyService() handler.LambdaHandler {
 	triangulationService := service.NewTriangulationService()
-	lambdaHandler := handler.NewLambdaHandler(triangulationService)
+	decodeMessageService := service.NewDecodeMessageService()
+	secretManagerService := awsSecret.NewAWSSecretManagerService()
+	client := mongodb.NewMongoClient(secretManagerService)
+	satelliteRepository := repository.NewSatelliteRepositoryMongo(client)
+	fuegoQuasarService := service.NewFuegoQuasarService(satelliteRepository, decodeMessageService, triangulationService)
+	lambdaHandler := handler.NewLambdaHandler(triangulationService, decodeMessageService, secretManagerService, satelliteRepository, fuegoQuasarService)
 	return lambdaHandler
 }

@@ -3,6 +3,48 @@
 This is a sample template for fuego-quasar-meli-app - Below is a brief explanation of what we have generated for you:
 
 ```bash
+
+# fuego-quasar-app
+
+* [internal/](./fuego-quasar-app/internal)
+  * [core/](./fuego-quasar-app/internal/core)
+    * [application/](./fuego-quasar-app/internal/core/application)
+      * [service/](./fuego-quasar-app/internal/core/application/service)
+        * [decodeMessageService.go](./fuego-quasar-app/internal/core/application/service/decodeMessageService.go)
+        * [fuegoQuasarService.go](./fuego-quasar-app/internal/core/application/service/fuegoQuasarService.go)
+        * [triangulationService.go](./fuego-quasar-app/internal/core/application/service/triangulationService.go)
+    * [domain/](./fuego-quasar-app/internal/core/domain)
+      * [model/](./fuego-quasar-app/internal/core/domain/model)
+        * [point.go](./fuego-quasar-app/internal/core/domain/model/point.go)
+        * [response.go](./fuego-quasar-app/internal/core/domain/model/response.go)
+        * [satellite.go](./fuego-quasar-app/internal/core/domain/model/satellite.go)
+        * [setting.go](./fuego-quasar-app/internal/core/domain/model/setting.go)
+      * [port/](./fuego-quasar-app/internal/core/domain/port)
+        * [decodeMessageService.go](./fuego-quasar-app/internal/core/domain/port/decodeMessageService.go)
+        * [fuegoQuasarService.go](./fuego-quasar-app/internal/core/domain/port/fuegoQuasarService.go)
+        * [satelliteRepository.go](./fuego-quasar-app/internal/core/domain/port/satelliteRepository.go)
+        * [secretManagerService.go](./fuego-quasar-app/internal/core/domain/port/secretManagerService.go)
+        * [triangulationService.go](./fuego-quasar-app/internal/core/domain/port/triangulationService.go)
+  * [infrastructure/](./fuego-quasar-app/internal/infrastructure)
+    * [awsSecret/](./fuego-quasar-app/internal/infrastructure/awsSecret)
+      * [AWSSecretManagerService.go](./fuego-quasar-app/internal/infrastructure/awsSecret/AWSSecretManagerService.go)
+    * [di/](./fuego-quasar-app/internal/infrastructure/di)
+      * [wire.go](./fuego-quasar-app/internal/infrastructure/di/wire.go)
+      * [wire_gen.go](./fuego-quasar-app/internal/infrastructure/di/wire_gen.go)
+    * [mongodb/](./fuego-quasar-app/internal/infrastructure/mongodb)
+      * [mongoClient.go](./fuego-quasar-app/internal/infrastructure/mongodb/mongoClient.go)
+    * [repository/](./fuego-quasar-app/internal/infrastructure/repository)
+      * [satelliteRepositoryMongo.go](./fuego-quasar-app/internal/infrastructure/repository/satelliteRepositoryMongo.go)
+  * [interfaces/](./fuego-quasar-app/internal/interfaces)
+    * [handler/](./fuego-quasar-app/internal/interfaces/handler)
+      * [lambdaHandler.go](./fuego-quasar-app/internal/interfaces/handler/lambdaHandler.go)
+* [test/](./fuego-quasar-app/test)
+  * [decodeMessageService_test.go](./fuego-quasar-app/test/decodeMessageService_test.go)
+  * [triangulationService_test.go](./fuego-quasar-app/test/triangulationService_test.go)
+* [go.mod](./fuego-quasar-app/go.mod)
+* [go.sum](./fuego-quasar-app/go.sum)
+* [main.go](./fuego-quasar-app/main.go)
+* [main_test.go](./fuego-quasar-app/main_test.go)
 .
 ├── Makefile                    <-- Make to automate build
 ├── README.md                   <-- This instructions file

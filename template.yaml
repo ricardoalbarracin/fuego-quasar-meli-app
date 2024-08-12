@@ -36,7 +36,15 @@ Resources:
             Method: POST
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
-          PARAM1: VALUE
+          CONNECTION_SECRET_NAME: prod/connectionstringfuegoquasardb
+          KENOBI_X: -500
+          KENOBI_Y: -200
+          SKYWALKER_X: 100
+          SKYWALKER_Y: -100
+          SATO_X: 500
+          SATO_Y: 100
+
+
 
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group
