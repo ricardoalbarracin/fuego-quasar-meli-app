@@ -60,6 +60,8 @@ La estructura del proyecto `fuego-quasar-app` está organizada de acuerdo con lo
 La carpeta `internal` contiene el código fuente del proyecto que está reservado para su uso interno y no debe ser importado desde otros proyectos o paquetes externos.
 
 #### 2.1.1 `core/`
+![Arquitectura del Core del Proyecto](img/core.png?raw=true "Diagrama de la arquitectura core del proyecto")
+*Diagrama de la arquitectura core del proyecto*
 
 La capa `core` es el núcleo de la aplicación, donde se encuentra la lógica de negocio y las definiciones del dominio.
 
