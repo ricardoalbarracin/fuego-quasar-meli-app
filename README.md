@@ -1,184 +1,211 @@
-# fuego-quasar-meli-app
+# Documentación del Proyecto AWS Lambda con SAM
 
-This is a sample template for fuego-quasar-meli-app - Below is a brief explanation of what we have generated for you:
+## 1. Introducción
 
-```bash
+- **Nombre del Proyecto**: `fuego-quasar-app`
+- **Descripción**: Este proyecto es una implementación en Go que utiliza la arquitectura hexagonal para calcular la ubicación de una nave a partir de distancias medidas por tres satélites y reconstruir el mensaje que la nave emite. El proyecto se despliega como una función Lambda utilizando AWS SAM.
 
-.
-├── Makefile                    <-- Make to automate build
-├── README.md                   <-- This instructions file
-├── hello-world                 <-- Source code for a lambda function
-│   ├── main.go                 <-- Lambda function code
-│   └── main_test.go            <-- Unit tests
-└── template.yaml
-```
-# fuego-quasar-app
+## 2. Estructura del Proyecto
 
-* [internal/](./fuego-quasar-app/internal)
-  * [core/](./fuego-quasar-app/internal/core)
-    * [application/](./fuego-quasar-app/internal/core/application)
-      * [service/](./fuego-quasar-app/internal/core/application/service)
-        * [decodeMessageService.go](./fuego-quasar-app/internal/core/application/service/decodeMessageService.go)
-        * [fuegoQuasarService.go](./fuego-quasar-app/internal/core/application/service/fuegoQuasarService.go)
-        * [triangulationService.go](./fuego-quasar-app/internal/core/application/service/triangulationService.go)
-    * [domain/](./fuego-quasar-app/internal/core/domain)
-      * [model/](./fuego-quasar-app/internal/core/domain/model)
-        * [point.go](./fuego-quasar-app/internal/core/domain/model/point.go)
-        * [response.go](./fuego-quasar-app/internal/core/domain/model/response.go)
-        * [satellite.go](./fuego-quasar-app/internal/core/domain/model/satellite.go)
-        * [setting.go](./fuego-quasar-app/internal/core/domain/model/setting.go)
-      * [port/](./fuego-quasar-app/internal/core/domain/port)
-        * [decodeMessageService.go](./fuego-quasar-app/internal/core/domain/port/decodeMessageService.go)
-        * [fuegoQuasarService.go](./fuego-quasar-app/internal/core/domain/port/fuegoQuasarService.go)
-        * [satelliteRepository.go](./fuego-quasar-app/internal/core/domain/port/satelliteRepository.go)
-        * [secretManagerService.go](./fuego-quasar-app/internal/core/domain/port/secretManagerService.go)
-        * [triangulationService.go](./fuego-quasar-app/internal/core/domain/port/triangulationService.go)
-  * [infrastructure/](./fuego-quasar-app/internal/infrastructure)
-    * [awsSecret/](./fuego-quasar-app/internal/infrastructure/awsSecret)
-      * [AWSSecretManagerService.go](./fuego-quasar-app/internal/infrastructure/awsSecret/AWSSecretManagerService.go)
-    * [di/](./fuego-quasar-app/internal/infrastructure/di)
-      * [wire.go](./fuego-quasar-app/internal/infrastructure/di/wire.go)
-      * [wire_gen.go](./fuego-quasar-app/internal/infrastructure/di/wire_gen.go)
-    * [mongodb/](./fuego-quasar-app/internal/infrastructure/mongodb)
-      * [mongoClient.go](./fuego-quasar-app/internal/infrastructure/mongodb/mongoClient.go)
-    * [repository/](./fuego-quasar-app/internal/infrastructure/repository)
-      * [satelliteRepositoryMongo.go](./fuego-quasar-app/internal/infrastructure/repository/satelliteRepositoryMongo.go)
-  * [interfaces/](./fuego-quasar-app/internal/interfaces)
-    * [handler/](./fuego-quasar-app/internal/interfaces/handler)
-      * [lambdaHandler.go](./fuego-quasar-app/internal/interfaces/handler/lambdaHandler.go)
-* [test/](./fuego-quasar-app/test)
-  * [decodeMessageService_test.go](./fuego-quasar-app/test/decodeMessageService_test.go)
-  * [triangulationService_test.go](./fuego-quasar-app/test/triangulationService_test.go)
-* [go.mod](./fuego-quasar-app/go.mod)
-* [go.sum](./fuego-quasar-app/go.sum)
-* [main.go](./fuego-quasar-app/main.go)
-* [main_test.go](./fuego-quasar-app/main_test.go)
+```plaintext
+fuego-quasar-app/
+├── internal/
+│   ├── core/
+│   │   ├── application/
+│   │   │   └── service/
+│   │   │       ├── decodeMessageService.go
+│   │   │       ├── fuegoQuasarService.go
+│   │   │       └── triangulationService.go
+│   │   └── domain/
+│   │       ├── model/
+│   │       │   ├── point.go
+│   │       │   ├── response.go
+│   │       │   ├── satellite.go
+│   │       │   └── setting.go
+│   │       └── port/
+│   │           ├── decodeMessageService.go
+│   │           ├── fuegoQuasarService.go
+│   │           ├── satelliteRepository.go
+│   │           ├── secretManagerService.go
+│   │           └── triangulationService.go
+│   ├── infrastructure/
+│   │   ├── awsSecret/
+│   │   │   └── AWSSecretManagerService.go
+│   │   ├── di/
+│   │   │   ├── wire.go
+│   │   │   └── wire_gen.go
+│   │   ├── mongodb/
+│   │   │   └── mongoClient.go
+│   │   └── repository/
+│   │       └── satelliteRepositoryMongo.go
+│   └── interfaces/
+│       └── handler/
+│           └── lambdaHandler.go
+├── test/
+│   ├── decodeMessageService_test.go
+│   └── triangulationService_test.go
+├── go.mod
+├── go.sum
+├── main.go
+└── main_test.go
 
 
-## Requirements
 
-* AWS CLI already configured with Administrator permission
-* [Docker installed](https://www.docker.com/community-edition)
-* [Golang](https://golang.org)
-* SAM CLI - [Install the SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
-
-## Setup process
-
-### Installing dependencies & building the target 
-
-In this example we use the built-in `sam build` to automatically download all the dependencies and package our build target.   
-Read more about [SAM Build here](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-build.html) 
-
-The `sam build` command is wrapped inside of the `Makefile`. To execute this simply run
- 
-```shell
-make
 ```
 
-### Local development
+La estructura del proyecto `fuego-quasar-app` está organizada de acuerdo con los principios de la arquitectura hexagonal. A continuación se describe cada capa y su propósito dentro del proyecto:
 
-**Invoking function locally through local API Gateway**
+### 2.1 `internal/`
 
-```bash
-sam local start-api
-```
+La carpeta `internal` contiene el código fuente del proyecto que está reservado para su uso interno y no debe ser importado desde otros proyectos o paquetes externos.
 
-If the previous command ran successfully you should now be able to hit the following local endpoint to invoke your function `http://localhost:3000/hello`
+#### 2.1.1 `core/`
 
-**SAM CLI** is used to emulate both Lambda and API Gateway locally and uses our `template.yaml` to understand how to bootstrap this environment (runtime, where the source code is, etc.) - The following excerpt is what the CLI will read in order to initialize an API and its routes:
+La capa `core` es el núcleo de la aplicación, donde se encuentra la lógica de negocio y las definiciones del dominio.
+
+- **`application/`**: Contiene los servicios de la aplicación, que implementan la lógica de negocio y las operaciones del dominio.
+
+  - **`service/`**: Implementa los servicios específicos de la aplicación.
+    - `decodeMessageService.go`: Servicio responsable de decodificar mensajes, basado en el modelo de dominio.
+    - `fuegoQuasarService.go`: Servicio específico del dominio, manejando la lógica central del proyecto.
+    - `triangulationService.go`: Servicio para manejar la lógica de triangulación, utilizada para posicionamiento.
+
+- **`domain/`**: Define los elementos del dominio de la aplicación, incluyendo modelos y puertos.
+
+  - **`model/`**: Contiene las estructuras de datos utilizadas en el dominio.
+    - `point.go`: Define estructuras y lógica para representar puntos en un espacio 2D o 3D.
+    - `response.go`: Define las estructuras para las respuestas de la aplicación.
+    - `satellite.go`: Define el modelo para los satélites.
+    - `setting.go`: Contiene configuraciones y ajustes específicos del dominio.
+
+  - **`port/`**: Define las interfaces que representan los puertos de entrada y salida de la aplicación. Estos puertos permiten la interacción con la lógica de negocio desde el exterior.
+    - `decodeMessageService.go`: Define la interfaz para el servicio de decodificación de mensajes.
+    - `fuegoQuasarService.go`: Define la interfaz para el servicio específico del dominio.
+    - `satelliteRepository.go`: Define la interfaz para el repositorio de satélites.
+    - `secretManagerService.go`: Define la interfaz para la gestión de secretos.
+    - `triangulationService.go`: Define la interfaz para el servicio de triangulación.
+
+#### 2.1.2 `infrastructure/`
+
+La capa `infrastructure` contiene las implementaciones que interactúan con sistemas externos, como bases de datos y servicios externos.
+
+- **`awsSecret/`**: Implementa la gestión de secretos utilizando AWS Secrets Manager.
+  - `AWSSecretManagerService.go`: Implementa la interfaz para acceder y gestionar los secretos almacenados en AWS Secrets Manager.
+
+- **`di/`**: Contiene la configuración para la inyección de dependencias.
+  - `wire.go`: Define las dependencias e implementaciones necesarias utilizando el framework Wire.
+  - `wire_gen.go`: Archivo generado automáticamente por Wire que contiene el código para la inyección de dependencias.
+
+- **`mongodb/`**: Contiene la configuración y las implementaciones relacionadas con la base de datos MongoDB.
+  - `mongoClient.go`: Configura y proporciona el cliente para interactuar con MongoDB.
+
+- **`repository/`**: Implementaciones de los repositorios que interactúan con los sistemas de almacenamiento de datos.
+  - `satelliteRepositoryMongo.go`: Implementa la interfaz del repositorio de satélites utilizando MongoDB como sistema de almacenamiento.
+
+#### 2.1.3 `interfaces/`
+
+La capa `interfaces` define los adaptadores que transforman las solicitudes y respuestas entre el mundo exterior y la lógica de negocio de la aplicación.
+
+- **`handler/`**: Maneja las solicitudes y respuestas de la interfaz de la aplicación.
+  - `lambdaHandler.go`: Adaptador para manejar las solicitudes provenientes de AWS Lambda, transformándolas en un formato que puede ser procesado por los servicios de la aplicación.
+
+### 2.2 `test/`
+
+Contiene las pruebas unitarias para asegurar que la lógica de la aplicación funcione correctamente.
+
+- `decodeMessageService_test.go`: Pruebas unitarias para el servicio de decodificación de mensajes.
+- `triangulationService_test.go`: Pruebas unitarias para el servicio de triangulación.
+
+
+
+## 3. Configuración de AWS SAM
+
+### 3.1. Archivo `template.yaml`
+
+El archivo `template.yaml` es el archivo principal de configuración para AWS SAM. Aquí está un ejemplo de cómo se vería este archivo:
 
 ```yaml
-...
-Events:
-    HelloWorld:
-        Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-        Properties:
-            Path: /hello
-            Method: get
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >-
+  Fuego Quasar App - Lambda Function
+Globals:
+  Function:
+    Timeout: 10
+    MemorySize: 128
+
+Resources:
+  FuegoQuasarFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: cmd/lambda/main
+      Runtime: go1.x
+      CodeUri: ./
+      Environment:
+        Variables:
+          CONNECTION_STRING_SETTING: "prod/conectionstringfuegoquasardb"
+      Events:
+        FuegoQuasarApi:
+          Type: Api
+          Properties:
+            Path: /api/v1/satellites
+            Method: post
 ```
+### 3.2. Variables de Entorno
 
-## Packaging and deployment
+- **`CONNECTION_STRING_SETTING`**: Cadena de conexión para la base de datos MongoDB. Este valor se puede configurar en el archivo `template.yaml` bajo la sección `Environment`.
 
-AWS Lambda Golang runtime requires a flat folder with the executable generated on build step. SAM will use `CodeUri` property to know where to look up for the application:
+### 3.3. Despliegue con AWS SAM
+
+#### 3.3.1. Instalación de AWS SAM CLI
+
+Asegúrate de tener instalado AWS SAM CLI. Si no lo tienes, puedes instalarlo siguiendo las instrucciones en la [documentación oficial de AWS SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html).
+
+#### 3.3.2. Compilación del Proyecto
+
+Antes de desplegar la función, debes compilar el proyecto. Ejecuta el siguiente comando en el directorio raíz del proyecto:
+
+```sh
+sam build
+
+```
+Este comando te guiará a través del proceso de despliegue, donde deberás proporcionar un nombre para el stack de CloudFormation y otros parámetros de configuración.
+
+### 3.4. Variables de Entorno en AWS
+
+Es importante definir correctamente las variables de entorno en el archivo `template.yaml`. Aquí tienes un ejemplo de cómo puedes definir una variable de entorno en el archivo `template.yaml`:
 
 ```yaml
-...
-    FirstFunction:
-        Type: AWS::Serverless::Function
-        Properties:
-            CodeUri: hello_world/
-            ...
+Environment:
+  Variables:
+    CONNECTION_STRING_SETTING: "prod/conectionstringfuegoquasardb"
+```
+## 4. Ejemplos de Uso
+
+### 4.1. Invocar la Función Lambda
+
+Puedes invocar la función Lambda utilizando la AWS CLI o una herramienta como Postman. Aquí hay un ejemplo utilizando la AWS CLI:
+
+```sh
+aws lambda invoke \
+    --function-name FuegoQuasarFunction \
+    --payload file://input.json \
+    output.json
+```
+## 5. Pruebas Unitarias
+
+### 5.1. Ejecutar todas las pruebas
+
+Para ejecutar todas las pruebas unitarias del proyecto, usa el siguiente comando:
+
+```sh
+go test ./...
 ```
 
-To deploy your application for the first time, run the following in your shell:
+### 5.2. Ejecutar Pruebas con Cobertura
 
-```bash
-sam deploy --guided
+Para ejecutar las pruebas unitarias y generar un informe de cobertura, utiliza el siguiente comando:
+
+```sh
+go test -coverprofile=coverage.out ./...
 ```
-
-The command will package and deploy your application to AWS, with a series of prompts:
-
-* **Stack Name**: The name of the stack to deploy to CloudFormation. This should be unique to your account and region, and a good starting point would be something matching your project name.
-* **AWS Region**: The AWS region you want to deploy your app to.
-* **Confirm changes before deploy**: If set to yes, any change sets will be shown to you before execution for manual review. If set to no, the AWS SAM CLI will automatically deploy application changes.
-* **Allow SAM CLI IAM role creation**: Many AWS SAM templates, including this example, create AWS IAM roles required for the AWS Lambda function(s) included to access AWS services. By default, these are scoped down to minimum required permissions. To deploy an AWS CloudFormation stack which creates or modifies IAM roles, the `CAPABILITY_IAM` value for `capabilities` must be provided. If permission isn't provided through this prompt, to deploy this example you must explicitly pass `--capabilities CAPABILITY_IAM` to the `sam deploy` command.
-* **Save arguments to samconfig.toml**: If set to yes, your choices will be saved to a configuration file inside the project, so that in the future you can just re-run `sam deploy` without parameters to deploy changes to your application.
-
-You can find your API Gateway Endpoint URL in the output values displayed after deployment.
-
-### Testing
-
-We use `testing` package that is built-in in Golang and you can simply run the following command to run our tests:
-
-```shell
-cd ./hello-world/
-go test -v .
-```
-# Appendix
-
-### Golang installation
-
-Please ensure Go 1.x (where 'x' is the latest version) is installed as per the instructions on the official golang website: https://golang.org/doc/install
-
-A quickstart way would be to use Homebrew, chocolatey or your linux package manager.
-
-#### Homebrew (Mac)
-
-Issue the following command from the terminal:
-
-```shell
-brew install golang
-```
-
-If it's already installed, run the following command to ensure it's the latest version:
-
-```shell
-brew update
-brew upgrade golang
-```
-
-#### Chocolatey (Windows)
-
-Issue the following command from the powershell:
-
-```shell
-choco install golang
-```
-
-If it's already installed, run the following command to ensure it's the latest version:
-
-```shell
-choco upgrade golang
-```
-
-## Bringing to the next level
-
-Here are a few ideas that you can use to get more acquainted as to how this overall process works:
-
-* Create an additional API resource (e.g. /hello/{proxy+}) and return the name requested through this new path
-* Update unit test to capture that
-* Package & Deploy
-
-Next, you can use the following resources to know more about beyond hello world samples and how others structure their Serverless applications:
-
-* [AWS Serverless Application Repository](https://aws.amazon.com/serverless/serverlessrepo/)
