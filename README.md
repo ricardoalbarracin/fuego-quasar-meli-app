@@ -264,29 +264,92 @@ El archivo `template.yaml` es el archivo principal de configuración para AWS SA
 ```yaml
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: >-
-  Fuego Quasar App - Lambda Function
+Description: >
+  fuego-quasar-meli-app
+
+  Plantilla SAM  para la función fuego-quasar-meli-app
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 10
+    Timeout: 5
     MemorySize: 128
 
+    Tracing: Active
+    # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
+    LoggingConfig:
+      LogFormat: JSON
+  Api:
+    TracingEnabled: true
 Resources:
   FuegoQuasarFunction:
-    Type: AWS::Serverless::Function
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Metadata:
+      BuildMethod: go1.x
     Properties:
-      Handler: cmd/lambda/main
-      Runtime: go1.x
-      CodeUri: ./
-      Environment:
-        Variables:
-          CONNECTION_STRING_SETTING: "prod/conectionstringfuegoquasardb"
+      CodeUri: fuego-quasar-app/
+      Handler: bootstrap
+      Runtime: provided.al2023
+      Architectures:
+      - x86_64
       Events:
-        FuegoQuasarApi:
-          Type: Api
+        Topsecret:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /api/v1/satellites
-            Method: post
+            Path: /topsecret
+            Method: POST
+        PosttopsecretSplit:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /topsecret_split
+            Method: POST
+        GettopsecretSplit:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /topsecret_split
+            Method: GET
+      Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+        Variables:
+          CONNECTION_SECRET_NAME: prod/connectionstringfuegoquasardb
+          KENOBI_X: -500
+          KENOBI_Y: -200
+          SKYWALKER_X: 100
+          SKYWALKER_Y: -100
+          SATO_X: 500
+          SATO_Y: 100
+
+
+
+  ApplicationResourceGroup:
+    Type: AWS::ResourceGroups::Group
+    Properties:
+      Name:
+        Fn::Sub: ApplicationInsights-SAM-${AWS::StackName}
+      ResourceQuery:
+        Type: CLOUDFORMATION_STACK_1_0
+  ApplicationInsightsMonitoring:
+    Type: AWS::ApplicationInsights::Application
+    Properties:
+      ResourceGroupName:
+        Ref: ApplicationResourceGroup
+      AutoConfigurationEnabled: 'true'
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  FuegoQuasardAPI:
+    Description: API Gateway endpoint URL for Prod environment for First Function
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/topsecret/"
+  FuegoQuasardAPI2:
+    Description: API Gateway endpoint URL for Prod environment for First Function
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/topsecret_split/"
+  FuegoQuasarFunction:
+    Description: First Lambda Function ARN
+    Value: !GetAtt FuegoQuasarFunction.Arn
+  FuegoQuasarFunctionIamRole:
+    Description: Implicit IAM Role created for Fuego Quasarfunction
+    Value: !GetAtt FuegoQuasarFunctionRole.Arn
+
 ```
 ### 3.2. Variables de Entorno
 Estas son las variables de entorno que usa la app para su correcto funcionamiento.
@@ -338,12 +401,4 @@ Para ejecutar todas las pruebas unitarias del proyecto, usa el siguiente comando
 
 ```sh
 go test ./...
-```
-
-### 5.2. Ejecutar Pruebas con Cobertura
-
-Para ejecutar las pruebas unitarias y generar un informe de cobertura, utiliza el siguiente comando:
-
-```sh
-go test -coverprofile=coverage.out ./...
 ```
