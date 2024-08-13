@@ -15,10 +15,10 @@ var (
 type DecodeMessageService struct{}
 
 func NewDecodeMessageService() port.DecodeMessageService {
-	return &DecodeMessageService{}
+	return DecodeMessageService{}
 }
 
-func (mp *DecodeMessageService) GetMessage(message [][]string) (string, error) {
+func (mp DecodeMessageService) GetMessage(message [][]string) (string, error) {
 	messageSize := getMessageLength(message)
 	if messageSize == 0 {
 		return "", fmt.Errorf("message length is zero")

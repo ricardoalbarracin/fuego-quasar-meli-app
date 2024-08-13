@@ -14,7 +14,7 @@ type SatelliteRepositoryMongo struct {
 }
 
 // NewSatelliteRepositoryMongo crea una nueva instancia de SatelliteRepositoryMongo.
-func NewSatelliteRepositoryMongo(client *mongo.Client) port.SatelliteRepository {
+func NewSatelliteRepositoryMongo(client mongo.Client) port.SatelliteRepository {
 	collection := client.Database("XXXXX").Collection("satellites")
 	return &SatelliteRepositoryMongo{collection: collection}
 }

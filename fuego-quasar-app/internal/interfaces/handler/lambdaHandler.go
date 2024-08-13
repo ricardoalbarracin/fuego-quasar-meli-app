@@ -22,7 +22,7 @@ func NewLambdaHandler(triangulationService port.TriangulationService, decodeMess
 	return LambdaHandler{triangulationService: triangulationService, decodeMessageService: decodeMessageService, secretManagerService: secretManagerService, satelliteRepository: satelliteRepository, fuegoQuasarService: fuegoQuasarService}
 }
 
-func (h *LambdaHandler) HandlePostRequestTopsecret_split(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func (h LambdaHandler) HandlePostRequestTopsecret_split(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	body := request.Body
 	var satellite model.Satellites
 
@@ -34,7 +34,7 @@ func (h *LambdaHandler) HandlePostRequestTopsecret_split(request events.APIGatew
 		log.Printf("Error al deserializar el cuerpo de la solicitud: %v", err)
 		return events.APIGatewayProxyResponse{
 			StatusCode: 400,
-			Body:       "Error al procesar el cuerpo de la solicitud",
+			Body:       "Error al procesar el cuerpo de la solicitud. Daat",
 		}, nil
 	}
 	err = h.fuegoQuasarService.ProcessSplitMessage(satellite)
@@ -50,7 +50,7 @@ func (h *LambdaHandler) HandlePostRequestTopsecret_split(request events.APIGatew
 	}, nil
 }
 
-func (h *LambdaHandler) HandleGetRequestTopsecret_split(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func (h LambdaHandler) HandleGetRequestTopsecret_split(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	response, err := h.fuegoQuasarService.ProcessSaveMessages()
 	if err != nil {
@@ -78,7 +78,7 @@ func (h *LambdaHandler) HandleGetRequestTopsecret_split(request events.APIGatewa
 	}, nil
 }
 
-func (h *LambdaHandler) HandlePostRequestTopsecret(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func (h LambdaHandler) HandlePostRequestTopsecret(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	body := request.Body
 	var satellites []model.Satellites
 
@@ -90,7 +90,7 @@ func (h *LambdaHandler) HandlePostRequestTopsecret(request events.APIGatewayProx
 		log.Printf("Error al deserializar el cuerpo de la solicitud: %v", err)
 		return events.APIGatewayProxyResponse{
 			StatusCode: 400,
-			Body:       "Error al procesar el cuerpo de la solicitud",
+			Body:       "Error al procesar el cuerpo de la solicitud.",
 		}, nil
 	}
 	response, err := h.fuegoQuasarService.ProcessMessages(satellites)
@@ -119,7 +119,7 @@ func (h *LambdaHandler) HandlePostRequestTopsecret(request events.APIGatewayProx
 	}, nil
 }
 
-func (h *LambdaHandler) HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func (h LambdaHandler) HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	switch request.Path {
 	case "/topsecret":

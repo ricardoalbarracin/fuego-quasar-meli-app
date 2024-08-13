@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func NewMongoClient(secretManagerService port.SecretManagerService) *mongo.Client {
+func NewMongoClient(secretManagerService port.SecretManagerService) mongo.Client {
 	secretName := os.Getenv("CONNECTION_SECRET_NAME")
 	setting, err := secretManagerService.GetSecret(secretName)
 	if err != nil {
@@ -33,5 +33,5 @@ func NewMongoClient(secretManagerService port.SecretManagerService) *mongo.Clien
 	if err != nil {
 		log.Fatalf("Error al hacer ping a MongoDB: %v", err)
 	}
-	return client
+	return *client
 }

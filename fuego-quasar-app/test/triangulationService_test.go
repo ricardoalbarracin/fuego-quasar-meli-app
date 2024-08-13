@@ -30,6 +30,17 @@ func TestTriangulationService_GetLocation(t *testing.T) {
 			wantErr: true,
 		},
 		{
+			name:    "Caso de error",
+			p1:      model.Point{X: -500, Y: -200},
+			p2:      model.Point{X: 100, Y: -100},
+			p3:      model.Point{X: 500, Y: 100},
+			d1:      549.74,
+			d2:      74.53,
+			d3:      495.53,
+			want:    model.Point{X: 0, Y: 0},
+			wantErr: true,
+		},
+		{
 			name:    "Simple case",
 			p1:      model.Point{X: 0, Y: 0},
 			p2:      model.Point{X: 1, Y: 0},

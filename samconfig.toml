@@ -1,8 +1,8 @@
 version = 0.1
 [default.deploy.parameters]
-stack_name = "FuegoQuasar-deploy"
+stack_name = "FuegoQuasar-deploy-app"
 resolve_s3 = true
-s3_prefix = "FuegoQuasar-deploy"
+s3_prefix = "FuegoQuasar-deploy-app"
 region = "us-east-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"

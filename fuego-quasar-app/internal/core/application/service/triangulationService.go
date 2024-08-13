@@ -10,9 +10,9 @@ import (
 type TriangulationService struct{}
 
 func NewTriangulationService() port.TriangulationService {
-	return &TriangulationService{}
+	return TriangulationService{}
 }
-func (t *TriangulationService) GetLocation(p1, p2, p3 model.Point, d1, d2, d3 float64) (model.Point, error) {
+func (t TriangulationService) GetLocation(p1, p2, p3 model.Point, d1, d2, d3 float64) (model.Point, error) {
 
 	// Construcción de las ecuaciones
 	A := 2 * (p2.X - p1.X)
@@ -34,7 +34,8 @@ func (t *TriangulationService) GetLocation(p1, p2, p3 model.Point, d1, d2, d3 fl
 
 	// Verificar si el punto (x, y) está en el tercer círculo
 	distanceToP3 := math.Sqrt(math.Pow(x-p3.X, 2) + math.Pow(y-p3.Y, 2))
-	if math.Abs(distanceToP3-d3) > 1e-6 {
+	valDis := distanceToP3 - d3
+	if math.Abs(valDis) > 1e-2 {
 		return model.Point{}, errors.New("no hay solución válida para encontrar su ubicacion")
 	}
 

@@ -2,10 +2,12 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"fuego-quasar-app/internal/core/domain/model"
 	"fuego-quasar-app/internal/core/domain/port"
 	"os"
 	"strconv"
+	"time"
 )
 
 type FuegoQuasarService struct {
@@ -15,12 +17,12 @@ type FuegoQuasarService struct {
 }
 
 func NewFuegoQuasarService(satelliteRepository port.SatelliteRepository, decodeMessageService port.DecodeMessageService, triangulationService port.TriangulationService) port.FuegoQuasarService {
-	return &FuegoQuasarService{satelliteRepository: satelliteRepository, decodeMessageService: decodeMessageService, triangulationService: triangulationService}
+	return FuegoQuasarService{satelliteRepository: satelliteRepository, decodeMessageService: decodeMessageService, triangulationService: triangulationService}
 }
 
-func (t *FuegoQuasarService) ProcessSplitMessage(satellite model.Satellites) error {
-
+func (t FuegoQuasarService) ProcessSplitMessage(satellite model.Satellites) error {
 	t.satelliteRepository.Delete(satellite.Name)
+	time.Sleep(100 * time.Millisecond)
 	err := t.satelliteRepository.Create(satellite)
 
 	return err
@@ -31,8 +33,16 @@ func (t FuegoQuasarService) ProcessSaveMessages() (model.Response, error) {
 	namesSatellites := []string{"kenobi", "skywalker", "sato"}
 	satellites, _ := t.satelliteRepository.FindByNames(namesSatellites)
 
-	if len(satellites) < 3 {
-		return model.Response{}, errors.New("no hay suficiente información")
+	numMessage := len(satellites)
+	if numMessage < 3 {
+		for _, satellite := range satellites {
+			fmt.Printf("Satellite Name : %s\n", satellite.Name)
+			fmt.Printf("Distance: %f\n", satellite.Distance)
+			fmt.Printf("Message: %v\n", satellite.Message)
+			fmt.Println("------------------------------")
+		}
+		errorMessage := fmt.Sprintf("no hay suficiente información %d", numMessage)
+		return model.Response{}, errors.New(errorMessage)
 	}
 	var messages [][]string
 	for _, satellite := range satellites {
@@ -68,7 +78,7 @@ func (t FuegoQuasarService) ProcessSaveMessages() (model.Response, error) {
 	return model.Response{Message: message, Position: position}, nil
 }
 
-func (t *FuegoQuasarService) ProcessMessages(satellites []model.Satellites) (model.Response, error) {
+func (t FuegoQuasarService) ProcessMessages(satellites []model.Satellites) (model.Response, error) {
 
 	if len(satellites) < 3 {
 		return model.Response{}, errors.New("no hay suficiente información")
@@ -109,7 +119,7 @@ func (t *FuegoQuasarService) ProcessMessages(satellites []model.Satellites) (mod
 	return model.Response{Message: message, Position: position}, nil
 }
 
-func (t *FuegoQuasarService) FilterSatelliteByName(satellites []model.Satellites, name string) (model.Satellites, error) {
+func (t FuegoQuasarService) FilterSatelliteByName(satellites []model.Satellites, name string) (model.Satellites, error) {
 	for _, satellite := range satellites {
 		if satellite.Name == name {
 			return satellite, nil
@@ -118,7 +128,7 @@ func (t *FuegoQuasarService) FilterSatelliteByName(satellites []model.Satellites
 	return model.Satellites{}, errors.New("error satellite not found")
 }
 
-func (t *FuegoQuasarService) GetSatellitesPoints() (model.Point, model.Point, model.Point, error) {
+func (t FuegoQuasarService) GetSatellitesPoints() (model.Point, model.Point, model.Point, error) {
 	kenobiX, err := strconv.ParseFloat(os.Getenv("KENOBI_X"), 64)
 	if err != nil {
 		return model.Point{}, model.Point{}, model.Point{}, err
