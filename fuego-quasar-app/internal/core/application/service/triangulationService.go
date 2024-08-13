@@ -25,7 +25,7 @@ func (t *TriangulationService) GetLocation(p1, p2, p3 model.Point, d1, d2, d3 fl
 	// Determinante del sistema
 	denominator := A*E - B*D
 	if denominator == 0 {
-		return model.Point{}, errors.New("El sistema de ecuaciones no se puede resolver: determinante es cero")
+		return model.Point{}, errors.New("no hay solución válida para encontrar su ubicacion")
 	}
 
 	// Cálculo de x y y
@@ -35,7 +35,7 @@ func (t *TriangulationService) GetLocation(p1, p2, p3 model.Point, d1, d2, d3 fl
 	// Verificar si el punto (x, y) está en el tercer círculo
 	distanceToP3 := math.Sqrt(math.Pow(x-p3.X, 2) + math.Pow(y-p3.Y, 2))
 	if math.Abs(distanceToP3-d3) > 1e-6 {
-		return model.Point{}, errors.New("No hay solución válida: el punto calculado no está en el tercer círculo")
+		return model.Point{}, errors.New("no hay solución válida para encontrar su ubicacion")
 	}
 
 	return model.Point{X: x, Y: y}, nil
