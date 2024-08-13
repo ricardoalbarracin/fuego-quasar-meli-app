@@ -20,25 +20,25 @@ func NewSatelliteRepositoryMongo(client *mongo.Client) port.SatelliteRepository 
 }
 
 // Create inserta un nuevo documento en MongoDB.
-func (r *SatelliteRepositoryMongo) Create(satellite *model.Satellites) error {
+func (r *SatelliteRepositoryMongo) Create(satellite model.Satellites) error {
 	_, err := r.collection.InsertOne(context.Background(), satellite)
 	return err
 }
 
 // FindByName busca un documento por nombre.
-func (r *SatelliteRepositoryMongo) FindByName(name string) (*model.Satellites, error) {
+func (r *SatelliteRepositoryMongo) FindByName(name string) (model.Satellites, error) {
 	var satellite model.Satellites
 	filter := bson.M{"name": name}
 	err := r.collection.FindOne(context.Background(), filter).Decode(&satellite)
 	if err != nil {
-		return nil, err
+		return model.Satellites{}, err
 	}
-	return &satellite, nil
+	return satellite, nil
 }
 
 // FindAll obtiene todos los documentos de la colección.
-func (r *SatelliteRepositoryMongo) FindAll() ([]*model.Satellites, error) {
-	var satellites []*model.Satellites
+func (r *SatelliteRepositoryMongo) FindAll() ([]model.Satellites, error) {
+	var satellites []model.Satellites
 
 	cursor, err := r.collection.Find(context.Background(), bson.M{})
 	if err != nil {
@@ -51,7 +51,7 @@ func (r *SatelliteRepositoryMongo) FindAll() ([]*model.Satellites, error) {
 		if err := cursor.Decode(&satellite); err != nil {
 			return nil, err
 		}
-		satellites = append(satellites, &satellite)
+		satellites = append(satellites, satellite)
 	}
 
 	if err := cursor.Err(); err != nil {
@@ -62,8 +62,8 @@ func (r *SatelliteRepositoryMongo) FindAll() ([]*model.Satellites, error) {
 }
 
 // FindByNames busca varios documentos por una lista de nombres.
-func (r *SatelliteRepositoryMongo) FindByNames(names []string) ([]*model.Satellites, error) {
-	var satellites []*model.Satellites
+func (r *SatelliteRepositoryMongo) FindByNames(names []string) ([]model.Satellites, error) {
+	var satellites []model.Satellites
 	filter := bson.M{"name": bson.M{"$in": names}}
 
 	cursor, err := r.collection.Find(context.Background(), filter)
@@ -77,7 +77,7 @@ func (r *SatelliteRepositoryMongo) FindByNames(names []string) ([]*model.Satelli
 		if err := cursor.Decode(&satellite); err != nil {
 			return nil, err
 		}
-		satellites = append(satellites, &satellite)
+		satellites = append(satellites, satellite)
 	}
 
 	if err := cursor.Err(); err != nil {

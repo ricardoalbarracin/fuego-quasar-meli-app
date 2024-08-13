@@ -1,7 +1,7 @@
 package model
 
 type Satellites struct {
-	Name     string
-	Distance float64
-	Message  []string
+	Name     string   `json:"name"`
+	Distance float64  `json:"distance"`
+	Message  []string `json:"message"`
 }

@@ -1,6 +1,6 @@
 package model
 
 type Response struct {
-	Position Point
-	Message  string
+	Position Point  `json:"position"`
+	Message  string `json:"message"`
 }

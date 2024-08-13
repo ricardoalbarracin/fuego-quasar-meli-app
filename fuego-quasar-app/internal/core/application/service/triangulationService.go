@@ -1,7 +1,7 @@
 package service
 
 import (
-	"fmt"
+	"errors"
 	"fuego-quasar-app/internal/core/domain/model"
 	"fuego-quasar-app/internal/core/domain/port"
 	"math"
@@ -14,22 +14,29 @@ func NewTriangulationService() port.TriangulationService {
 }
 func (t *TriangulationService) GetLocation(p1, p2, p3 model.Point, d1, d2, d3 float64) (model.Point, error) {
 
-	// Coeficientes para las ecuaciones
-	A := 2*p2.X - 2*p1.X
-	B := 2*p2.Y - 2*p1.Y
-	C := d1*d1 - d2*d2 - p1.X*p1.X + p2.X*p2.X - p1.Y*p1.Y + p2.Y*p2.Y
-	D := 2*p3.X - 2*p2.X
-	E := 2*p3.Y - 2*p2.Y
-	F := d2*d2 - d3*d3 - p2.X*p2.X + p3.X*p3.X - p2.Y*p2.Y + p3.Y*p3.Y
+	// Construcción de las ecuaciones
+	A := 2 * (p2.X - p1.X)
+	B := 2 * (p2.Y - p1.Y)
+	C := math.Pow(d1, 2) - math.Pow(d2, 2) - math.Pow(p1.X, 2) + math.Pow(p2.X, 2) - math.Pow(p1.Y, 2) + math.Pow(p2.Y, 2)
+	D := 2 * (p3.X - p1.X)
+	E := 2 * (p3.Y - p1.Y)
+	F := math.Pow(d1, 2) - math.Pow(d3, 2) - math.Pow(p1.X, 2) + math.Pow(p3.X, 2) - math.Pow(p1.Y, 2) + math.Pow(p3.Y, 2)
 
-	// Resolver para x y
+	// Determinante del sistema
 	denominator := A*E - B*D
-	if math.Abs(denominator) < 1e-10 {
-		return model.Point{}, fmt.Errorf("las ecuaciones son paralelas o no tienen solución única")
+	if denominator == 0 {
+		return model.Point{}, errors.New("El sistema de ecuaciones no se puede resolver: determinante es cero")
 	}
 
-	x := (C*E - B*F) / denominator
-	y := (C*D - A*F) / denominator
+	// Cálculo de x y y
+	x := (C*E - F*B) / denominator
+	y := (A*F - C*D) / denominator
+
+	// Verificar si el punto (x, y) está en el tercer círculo
+	distanceToP3 := math.Sqrt(math.Pow(x-p3.X, 2) + math.Pow(y-p3.Y, 2))
+	if math.Abs(distanceToP3-d3) > 1e-6 {
+		return model.Point{}, errors.New("No hay solución válida: el punto calculado no está en el tercer círculo")
+	}
 
 	return model.Point{X: x, Y: y}, nil
 }

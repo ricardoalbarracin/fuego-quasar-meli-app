@@ -1,9 +1,11 @@
 package handler
 
 import (
-	"fmt"
+	"encoding/json"
 	"fuego-quasar-app/internal/core/domain/model"
 	"fuego-quasar-app/internal/core/domain/port"
+	"log"
+	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
 )
@@ -20,73 +22,132 @@ func NewLambdaHandler(triangulationService port.TriangulationService, decodeMess
 	return LambdaHandler{triangulationService: triangulationService, decodeMessageService: decodeMessageService, secretManagerService: secretManagerService, satelliteRepository: satelliteRepository, fuegoQuasarService: fuegoQuasarService}
 }
 
-func (h *LambdaHandler) HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func (h *LambdaHandler) HandlePostRequestTopsecret_split(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	body := request.Body
+	var satellite model.Satellites
 
-	//aaa, _ := h.satelliteRepository.FindByName("DummySatellite")
-	//fmt.Println("Secret:", aaa.Name)
-	h.satelliteRepository.DeleteAll()
-	h.satelliteRepository.Create(&model.Satellites{
-		Name:     "kenobi",
-		Distance: 100.0,
-		Message:  []string{"este", "", "", "mensaje", ""},
-	})
+	// Obtener el cuerpo de la solicitud
 
-	h.satelliteRepository.Create(&model.Satellites{
-		Name:     "skywalker",
-		Distance: 115.5,
-		Message:  []string{"", "es", "", "", "secreto"},
-	})
-
-	h.satelliteRepository.Create(&model.Satellites{
-		Name:     "sato",
-		Distance: 142.7,
-		Message:  []string{"este", "", "un", "", ""},
-	})
-	msg, _ := h.fuegoQuasarService.ProcessSaveMessages()
-	fmt.Printf("XX: %f YY: %f\n", msg.Position.X, msg.Position.Y)
-
-	fmt.Printf(" pro: %s\n", msg.Message)
-	var greeting string
-	sourceIP := request.RequestContext.Identity.SourceIP
-	//secretName := "prod/conectionstringfuegoquasardb"
-	//secret, _ := h.secretManagerService.GetSecret(secretName)
-
-	satellites, _ := h.satelliteRepository.FindAll()
-	for _, satellite := range satellites {
-		fmt.Printf("Satellite Name: %s\n", satellite.Name)
-		fmt.Printf("Distance: %f\n", satellite.Distance)
-		fmt.Printf("Message: %v\n", satellite.Message)
-		fmt.Println("------------------------------")
+	// Deserializar el cuerpo JSON a la estructura RequestBody
+	err := json.Unmarshal([]byte(body), &satellite)
+	if err != nil {
+		log.Printf("Error al deserializar el cuerpo de la solicitud: %v", err)
+		return events.APIGatewayProxyResponse{
+			StatusCode: 400,
+			Body:       "Error al procesar el cuerpo de la solicitud",
+		}, nil
 	}
-
-	p1 := model.Point{X: -500, Y: -200}
-	p2 := model.Point{X: 100, Y: -100}
-	p3 := model.Point{X: 500, Y: 100}
-
-	// Distancias desde el dispositivo hasta los puntos de referencia
-	d1 := 100.0
-	d2 := 115.5
-	d3 := 142.7
-
-	listOfLists := [][]string{
-		{"", "este", "es", "un", "mensaje"},
-		{"este", "", "un", "mensaje"},
-		{"", "este", "es", "", ""},
+	err = h.fuegoQuasarService.ProcessSplitMessage(satellite)
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			Body:       err.Error(),
+			StatusCode: 400,
+		}, nil
 	}
-	// Calculo de la posicion
-	punto, _ := h.triangulationService.GetLocation(p1, p2, p3, d1, d2, d3)
-	fmt.Printf("X: %f Y: %f", punto.X, punto.Y)
-	mensaje, _ := h.decodeMessageService.GetMessage(listOfLists)
-	fmt.Printf("mensaje: %s", mensaje)
-	//myEnvVar := os.Getenv("PARAM1")
-	if sourceIP == "" {
-		greeting = fmt.Sprintf("HellXXasaYYYYXXXXSo, X: %f Y: %f\n", punto.X, punto.Y)
-	} else {
-		greeting = fmt.Sprintf("HellXXXXXXSo, %f!\n", 1)
-	}
-
 	return events.APIGatewayProxyResponse{
-		Body:       greeting,
+		Body:       "OK",
 		StatusCode: 200,
 	}, nil
+}
+
+func (h *LambdaHandler) HandleGetRequestTopsecret_split(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
+	response, err := h.fuegoQuasarService.ProcessSaveMessages()
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			Body:       err.Error(),
+			StatusCode: 400,
+		}, nil
+
+	}
+	// Serializar la estructura a JSON
+	jsonData, err := json.Marshal(response)
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			Body:       err.Error(),
+			StatusCode: 400,
+		}, nil
+
+	}
+	// Convertir []byte a string para imprimirlo
+	jsonString := string(jsonData)
+
+	return events.APIGatewayProxyResponse{
+		Body:       jsonString,
+		StatusCode: 200,
+	}, nil
+}
+
+func (h *LambdaHandler) HandlePostRequestTopsecret(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	body := request.Body
+	var satellites []model.Satellites
+
+	// Obtener el cuerpo de la solicitud
+	satellites = nil
+	// Deserializar el cuerpo JSON a la estructura RequestBody
+	err := json.Unmarshal([]byte(body), &satellites)
+	if err != nil {
+		log.Printf("Error al deserializar el cuerpo de la solicitud: %v", err)
+		return events.APIGatewayProxyResponse{
+			StatusCode: 400,
+			Body:       "Error al procesar el cuerpo de la solicitud",
+		}, nil
+	}
+	response, err := h.fuegoQuasarService.ProcessMessages(satellites)
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			Body:       err.Error(),
+			StatusCode: 400,
+		}, nil
+	}
+
+	jsonData, err := json.Marshal(response)
+	if err != nil {
+		return events.APIGatewayProxyResponse{
+			Body:       err.Error(),
+			StatusCode: 400,
+		}, nil
+
+	}
+
+	// Convertir []byte a string para imprimirlo
+	jsonString := string(jsonData)
+
+	return events.APIGatewayProxyResponse{
+		Body:       jsonString,
+		StatusCode: 200,
+	}, nil
+}
+
+func (h *LambdaHandler) HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
+	switch request.Path {
+	case "/topsecret":
+		if request.HTTPMethod == "POST" {
+			return h.HandlePostRequestTopsecret(request)
+		}
+		return events.APIGatewayProxyResponse{
+			StatusCode: http.StatusMethodNotAllowed,
+			Body:       "Método no permitido",
+		}, nil
+
+	case "/topsecret_split":
+		switch request.HTTPMethod {
+		case "GET":
+			return h.HandleGetRequestTopsecret_split(request)
+		case "POST":
+			return h.HandlePostRequestTopsecret_split(request)
+		default:
+			return events.APIGatewayProxyResponse{
+				StatusCode: http.StatusMethodNotAllowed,
+				Body:       "Método no permitido",
+			}, nil
+		}
+	default:
+		return events.APIGatewayProxyResponse{
+			StatusCode: http.StatusNotFound,
+			Body:       "Endpoint no encontrado",
+		}, nil
+	}
+
 }

@@ -2,7 +2,6 @@ package mongodb
 
 import (
 	"context"
-	"fmt"
 	"fuego-quasar-app/internal/core/domain/port"
 	"log"
 	"os"
@@ -17,7 +16,6 @@ func NewMongoClient(secretManagerService port.SecretManagerService) *mongo.Clien
 	if err != nil {
 		log.Fatalf("Error al conectar con MongoDB: %v", err)
 	}
-	log.Printf("setting %s", setting.Value)
 
 	// Crear opciones de cliente MongoDB
 	clientOptions := options.Client().ApplyURI(setting.Value)
@@ -35,7 +33,5 @@ func NewMongoClient(secretManagerService port.SecretManagerService) *mongo.Clien
 	if err != nil {
 		log.Fatalf("Error al hacer ping a MongoDB: %v", err)
 	}
-
-	fmt.Println("Conexión a MongoDB exitosa")
 	return client
 }

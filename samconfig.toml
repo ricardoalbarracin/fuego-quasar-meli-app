@@ -1,36 +1,10 @@
-# More information about the configuration file can be found here:
-# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-config.html
 version = 0.1
-
-[default]
-[default.global.parameters]
-stack_name = "fuego-quasar-app"
-
-[default.build.parameters]
-cached = true
-parallel = true
-
-[default.validate.parameters]
-lint = true
-
 [default.deploy.parameters]
-capabilities = "CAPABILITY_IAM"
-confirm_changeset = true
+stack_name = "FuegoQuasar-deploy"
 resolve_s3 = true
-stack_name = "test"
-s3_prefix = "test"
+s3_prefix = "FuegoQuasar-deploy"
 region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
 disable_rollback = true
 image_repositories = []
-
-[default.package.parameters]
-resolve_s3 = true
-
-[default.sync.parameters]
-watch = true
-
-[default.local_start_api.parameters]
-warm_containers = "EAGER"
-
-[default.local_start_lambda.parameters]
-warm_containers = "EAGER"

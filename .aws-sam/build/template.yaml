@@ -23,11 +23,21 @@ Resources:
       Architectures:
       - x86_64
       Events:
-        CatchAll:
+        Topsecret:
           Type: Api
           Properties:
             Path: /topsecret
             Method: POST
+        PosttopsecretSplit:
+          Type: Api
+          Properties:
+            Path: /topsecret_split
+            Method: POST
+        GettopsecretSplit:
+          Type: Api
+          Properties:
+            Path: /topsecret_split
+            Method: GET
       Environment:
         Variables:
           CONNECTION_SECRET_NAME: prod/connectionstringfuegoquasardb
@@ -55,6 +65,10 @@ Outputs:
     Description: API Gateway endpoint URL for Prod environment for First Function
     Value:
       Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/topsecret/
+  FuegoQuasardAPI2:
+    Description: API Gateway endpoint URL for Prod environment for First Function
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/topsecret_split/
   FuegoQuasarFunction:
     Description: First Lambda Function ARN
     Value:

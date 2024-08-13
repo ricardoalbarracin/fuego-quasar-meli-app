@@ -29,11 +29,21 @@ Resources:
       Architectures:
       - x86_64
       Events:
-        CatchAll:
+        Topsecret:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /topsecret
             Method: POST
+        PosttopsecretSplit:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /topsecret_split
+            Method: POST
+        GettopsecretSplit:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /topsecret_split
+            Method: GET
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables:
           CONNECTION_SECRET_NAME: prod/connectionstringfuegoquasardb
@@ -66,6 +76,9 @@ Outputs:
   FuegoQuasardAPI:
     Description: API Gateway endpoint URL for Prod environment for First Function
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/topsecret/"
+  FuegoQuasardAPI2:
+    Description: API Gateway endpoint URL for Prod environment for First Function
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/topsecret_split/"
   FuegoQuasarFunction:
     Description: First Lambda Function ARN
     Value: !GetAtt FuegoQuasarFunction.Arn
