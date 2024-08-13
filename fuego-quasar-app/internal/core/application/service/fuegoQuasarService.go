@@ -70,6 +70,9 @@ func (t FuegoQuasarService) ProcessSaveMessages() (model.Response, error) {
 
 func (t *FuegoQuasarService) ProcessMessages(satellites []model.Satellites) (model.Response, error) {
 
+	if len(satellites) < 3 {
+		return model.Response{}, errors.New("no hay suficiente información")
+	}
 	var messages [][]string
 	for _, satellite := range satellites {
 		messages = append(messages, satellite.Message)
