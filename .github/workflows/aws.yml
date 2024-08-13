@@ -28,4 +28,40 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
     - run: sam build --use-container
     - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
+  test-api:
+    name: test
+    runs-on: ubuntu-latest
+    steps:     
+    - name: Install Node
+      uses: actions/setup-node@v1 with:
+        node-version: "16.x"
+    
+    #Install the Newman command line utility, the html extra reporter and Slack Reporter
+    - name: Install Newman, HTMLReporter and Slack Reporter
+      run: |
+        npm install -g newman
+        npm install -g newman-reporter-htmlextra
+        npm install -g newman-reporter-slackreporter
 
+    #Make directory to upload the results
+    - name: Make Directory for Test results
+      run: mkdir -p testResults
+
+    #Run the POSTMAN Collection
+    - name: Run Postman Collection
+      env:
+        COLLECTION_UID: ${{secrets.COLLECTION_UID}} ENVIRONMENT_UID: ${{secrets. ENVIRONMENT_UID}}
+        #API_KEY: ${{secrets.API_KEY}}
+        
+      run: |
+        newman run https://api.getpostman.com/collections/2242228-bbadee89-3d1d-434b-bb27-4220d2738fda/?apikey=PMAK-66bbc63e22b75500017b4fdd-abc5ef1b5994e4220e47075e4da8462b55
+        –environment https://api.getpostman.com/environments/2242228-c25adb19-d282-4e15-ba47-4a3fec9549c3/?apikey=PMAK-66bbc63e22b75500017b4fdd-abc5ef1b5994e4220e47075e4da8462b55
+        –suppress-exit-code –reporters slackreporter,htmlextra
+        –reporter-htmlextra-export testResults/htmlReport.html
+
+      #Upload the contents of Test Results directory to workspace
+      - name: Output the Result Details
+        uses: actions/upload-artifact@v2
+          with:
+            name: RunReports
+            path: testResults
