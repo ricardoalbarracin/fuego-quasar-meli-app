@@ -56,10 +56,10 @@ jobs:
         #API_KEY: ${{secrets.API_KEY}}
         
       run: |
-        newman run https://api.getpostman.com/collections/2242228-bbadee89-3d1d-434b-bb27-4220d2738fda/?apikey=PMAK-66bbc63e22b75500017b4fdd-abc5ef1b5994e4220e47075e4da8462b55
-        –environment https://api.getpostman.com/environments/2242228-c25adb19-d282-4e15-ba47-4a3fec9549c3/?apikey=PMAK-66bbc63e22b75500017b4fdd-abc5ef1b5994e4220e47075e4da8462b55
-        –suppress-exit-code –reporters slackreporter,htmlextra
-        –reporter-htmlextra-export testResults/htmlReport.html
+        newman run https://api.getpostman.com/collections/2242228-bbadee89-3d1d-434b-bb27-4220d2738fda/?apikey=PMAK-66bbc63e22b75500017b4fdd-abc5ef1b5994e4220e47075e4da8462b55 |
+        –environment https://api.getpostman.com/environments/2242228-c25adb19-d282-4e15-ba47-4a3fec9549c3/?apikey=PMAK-66bbc63e22b75500017b4fdd-abc5ef1b5994e4220e47075e4da8462b55 |
+        –suppress-exit-code –reporters slackreporter,htmlextra |
+        –reporter-htmlextra-export testResults/htmlReport.html |
 
       #Upload the contents of Test Results directory to workspace
     - name: Output the Result Details
