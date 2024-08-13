@@ -30,6 +30,7 @@ jobs:
     - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset
   test-api:
     name: test
+    needs: deploy
     runs-on: ubuntu-latest
     steps:     
     - name: Install Node
@@ -54,7 +55,7 @@ jobs:
         API_KEY: ${{secrets.PostmanKey}}
         
       run: |
-        newman run https://api.getpostman.com/collections/2242228-bbadee89-3d1d-434b-bb27-4220d2738fda/?apikey=$API_KEY –environment https://api.getpostman.com/environments/2242228-c25adb19-d282-4e15-ba47-4a3fec9549c3/?apikey=$API_KEY –suppress-exit-code -r htmlextra 
+        newman run https://api.getpostman.com/collections/2242228-bbadee89-3d1d-434b-bb27-4220d2738fda/?apikey=$API_KEY –environment https://api.getpostman.com/environments/2242228-c25adb19-d282-4e15-ba47-4a3fec9549c3/?apikey=$API_KEY –suppress-exit-code -r 'cli,htmlextra'  
         
     
     #Upload the contents of Test Results directory to workspace
