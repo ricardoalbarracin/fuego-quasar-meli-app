@@ -51,7 +51,7 @@ jobs:
     #Run the POSTMAN Collection
     - name: Run Postman Collection
       env:
-        COLLECTION_UID: ${{secrets.COLLECTION_UID}} ENVIRONMENT_UID: ${{secrets. ENVIRONMENT_UID}}
+        #COLLECTION_UID: ${{secrets.COLLECTION_UID}} ENVIRONMENT_UID: ${{secrets.ENVIRONMENT_UID}}
         #API_KEY: ${{secrets.API_KEY}}
         
       run: |
@@ -61,8 +61,8 @@ jobs:
         –reporter-htmlextra-export testResults/htmlReport.html
 
       #Upload the contents of Test Results directory to workspace
-      - name: Output the Result Details
-        uses: actions/upload-artifact@v2
-          with:
-            name: RunReports
-            path: testResults
+    - name: Output the Result Details
+      uses: actions/upload-artifact@v2
+      with:
+        name: RunReports
+        path: testResults
