@@ -5,6 +5,95 @@
 - **Nombre del Proyecto**: `fuego-quasar-app`
 - **Descripción**: Este proyecto es una implementación en Go que utiliza la arquitectura hexagonal para calcular la ubicación de una nave a partir de distancias medidas por tres satélites y reconstruir el mensaje que la nave emite. El proyecto se despliega como una función Lambda utilizando AWS SAM.
 
+### 1.1 Solución al problema de encontrar al punto
+En un problema de trilateración con tres puntos de referencia en un plano 2D y un cuarto punto desconocido cuya distancia a estos tres puntos es conocida, queremos encontrar las coordenadas del punto desconocido.
+
+#### 1.1.2 Sistema de Ecuaciones
+
+Dado tres puntos de referencia \((x_1, y_1)\), \((x_2, y_2)\), y \((x_3, y_3)\), y las distancias desde el punto desconocido \((x, y)\) a estos puntos \(d_1\), \(d_2\), y \(d_3\), las ecuaciones basadas en la distancia euclidiana son:
+
+1. 
+   ![Ecuación 1](https://latex.codecogs.com/gif.latex?(x%20-%20x_1)^2%20%2B%20(y%20-%20y_1)^2%20%3D%20d_1^2)
+
+2.
+   ![Ecuación 2](https://latex.codecogs.com/gif.latex?(x%20-%20x_2)^2%20%2B%20(y%20-%20y_2)^2%20%3D%20d_2^2)
+
+3. 
+   ![Ecuación 3](https://latex.codecogs.com/gif.latex?(x%20-%20x_3)^2%20%2B%20(y%20-%20y_3)^2%20%3D%20d_3^2)
+
+la solucion de este sistema de ecuaciones nos da como resultado el X, Y
+
+#### 1.1.3  Verificación Algebraica
+
+##### 1.1.3.1  Cálculo del Determinante
+
+Para verificar la existencia y unicidad de la solución, se debe evaluar el determinante del sistema lineal obtenido al restar pares de ecuaciones cuadráticas. El determinante ayuda a determinar si el sistema es resoluble.
+
+- **Determinante**:
+
+
+![Determinador](https://latex.codecogs.com/gif.latex?denominator%20%3D%202(x_2%20-%20x_1)%20*%202(y_3%20-%20y_1)%20-%202(y_2%20-%20y_1)%20*%202(x_3%20-%20x_1))
+
+Si el denominador es cero, las ecuaciones pueden ser linealmente dependientes, lo que puede indicar que el sistema no tiene una solución única. En este caso, verifica si las ecuaciones son inconsistentes o si el sistema tiene soluciones infinitas.
+
+##### 1.1.3.1 Solución del Sistema Lineal
+
+Resuelve el sistema lineal para las coordenadas \(x\) e \(y\) usando las siguientes fórmulas:
+
+- **Solución para \(x\)**:
+
+
+![Solución X](https://latex.codecogs.com/gif.latex?x%20%3D%20%5Cfrac%7B(d_1^2%20-%20d_2^2%20%2B%20x_2^2%20-%20x_1^2%20%2B%20y_2^2%20-%20y_1^2)%20*%202(y_3%20-%20y_1)%20-%20(d_1^2%20-%20d_3^2%20%2B%20x_3^2%20-%20x_1^2%20%2B%20y_3^2%20-%20y_1^2)%20*%202(y_2%20-%20y_1)%7D%7Bdenominator%7D)
+
+- **Solución para \(y\)**:
+
+
+![Solución Y](https://latex.codecogs.com/gif.latex?y%20%3D%20%5Cfrac%7B(d_1^2%20-%20d_2^2%20%2B%20x_2^2%20-%20x_1^2%20%2B%20y_2^2%20-%20y_1^2)%20*%202(x_1%20-%20x_2)%20-%20(d_1^2%20-%20d_3^2%20%2B%20x_1^2%20-%20x_3^2%20%2B%20y_1^2%20-%20y_3^2)%20*%202(x_1%20-%20x_3)%7D%7Bdenominator%7D)
+
+##### 1.1.3. Conclusión
+**Solución Única**: Si el determinante no es cero y las distancias cumplen las condiciones triangulares, hay una solución única para  (𝑥,𝑦)
+
+**No hay Solución**: Si el determinante es cero y las distancias no cumplen las condiciones triangulares, o si las ecuaciones son inconsistentes, no hay solución válida.
+
+**Soluciones Múltiples**: Si el determinante es cero pero las ecuaciones son consistentes, puede haber soluciones infinitas o ninguna solución dependiendo de las condiciones adicionales.
+
+Estas verificaciones aseguran que el sistema de ecuaciones tiene una solución válida y ayuda a identificar posibles problemas en los datos o en la implementación del algoritmo.
+
+### 1.2 Solución al problema de decodificar el mensaje
+
+El paquete `service` proporciona una implementación para decodificar mensajes a partir de un conjunto de datos de entrada. Esta implementación se basa en la idea de que cada entrada en el mensaje puede tener palabras en una posición específica, y el objetivo es construir un mensaje a partir de la palabra más frecuente en cada posición.
+
+### DecodeMessageService
+
+Esta funcion de servicio está diseñado para decodificar mensajes a partir de una matriz de cadenas.
+
+#### Métodos
+
+- **GetMessage(message [][]string) (string, error)**: Decodifica el mensaje dado. Combina las palabras más frecuentes en cada posición de las sublistas del mensaje para construir la cadena final. Retorna el mensaje decodificado o un error si hay problemas con la longitud del mensaje o si el resultado está vacío.
+
+## Funciones Auxiliares
+
+### getMessageLength
+
+Calcula la longitud máxima del mensaje basada en el tamaño de las sublistas.
+
+### getWordByPosition
+
+Obtiene la palabra más frecuente en una posición específica de las sublistas.
+
+### deleteOffset
+
+Elimina los elementos anteriores a una longitud específica de cada sublista en el mensaje.
+
+### getMessageLengthFirtsWord
+
+Encuentra la palabra más frecuente en la primera posición y devuelve su índice y la longitud de la sublista correspondiente.
+
+### removeEmptyStrings
+
+Elimina las cadenas vacías de una lista de strings.
+En resumen, este servicio toma un conjunto de datos en forma de matriz de cadenas, encuentra la palabra más frecuente en cada posición, y construye el mensaje decodificado final. Además, maneja errores relacionados con la longitud del mensaje y el contenido resultante.
+
 ## 2. Estructura del Proyecto
 
 ```plaintext
@@ -86,6 +175,8 @@ La capa `core` es el núcleo de la aplicación, donde se encuentra la lógica de
     - `satelliteRepository.go`: Define la interfaz para el repositorio de satélites.
     - `secretManagerService.go`: Define la interfaz para la gestión de secretos.
     - `triangulationService.go`: Define la interfaz para el servicio de triangulación.
+   
+
 
 #### 2.1.2 `infrastructure/`
 ![Arquitectura del Infraestructura del Proyecto](img/infraestructura.png?raw=true "Diagrama de la arquitectura core del proyecto")
