@@ -20,4 +20,4 @@ jobs:
 # Run Unit tests- Specify unit tests here 
 
 # sam deploy
-      - run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset  --no-confirm-changeset
+      - run: sam deploy --confirm-changeset --no-fail-on-empty-changeset
