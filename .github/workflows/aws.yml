@@ -46,10 +46,6 @@ jobs:
       run: |
         npm install -g newman-reporter-htmlextra
 
-    #Make directory to upload the results
-    - name: Make Directory for Test results
-      run: mkdir -p testResults
-
     #Run the POSTMAN Collection
     - name: Run Postman Collection
       env:
@@ -58,15 +54,12 @@ jobs:
         API_KEY: ${{secrets.PostmanKey}}
         
       run: |
-        newman run https://api.getpostman.com/collections/2242228-bbadee89-3d1d-434b-bb27-4220d2738fda/?apikey=$API_KEY –environment https://api.getpostman.com/environments/2242228-c25adb19-d282-4e15-ba47-4a3fec9549c3/?apikey=$API_KEY –suppress-exit-code –reporters htmlextra –reporter-htmlextra-export testResults/htmlReport.html 
+        newman run https://api.getpostman.com/collections/2242228-bbadee89-3d1d-434b-bb27-4220d2738fda/?apikey=$API_KEY –environment https://api.getpostman.com/environments/2242228-c25adb19-d282-4e15-ba47-4a3fec9549c3/?apikey=$API_KEY –suppress-exit-code -r htmlextra 
         
-    - name: list Directory for Test results
-      run: |
-        ls
-        ls testResults/
+    
     #Upload the contents of Test Results directory to workspace
     - name: Output the Result Details
       uses: actions/upload-artifact@v2
       with:
         name: RunReports
-        path: testResults
+        path: newman
