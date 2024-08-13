@@ -51,6 +51,7 @@ jobs:
     #Run the POSTMAN Collection
     - name: Run Postman Collection
       env:
+        TEST: sdsadasd
         #COLLECTION_UID: ${{secrets.COLLECTION_UID}} ENVIRONMENT_UID: ${{secrets.ENVIRONMENT_UID}}
         #API_KEY: ${{secrets.API_KEY}}
         
