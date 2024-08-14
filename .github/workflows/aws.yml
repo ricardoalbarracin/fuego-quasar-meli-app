@@ -26,14 +26,13 @@ jobs:
         run: |
           cd ./fuego-quasar-app
           ls
-          go get .
-        
+          go get .       
       
       - name: Test with Go
         run: |
           cd ./fuego-quasar-app
           ls
-          go test ./...
+          go test ./... -json TestResults-${{ matrix.go-version }}.jsonn 
           
       - name: Upload Go test results
         uses: actions/upload-artifact@v4
