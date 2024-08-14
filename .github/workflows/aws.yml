@@ -33,7 +33,7 @@ jobs:
       
       - name: Test with Go
         run: |
-          
+          ls
           go test ./...
           
       - name: Upload Go test results
