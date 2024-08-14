@@ -437,6 +437,8 @@ Ejecuión de las pruebas de regresión
 
 ademas de esto **newman** genera un reporte detallado con el resultado de cada ejecuion y cada caso de pruba. aca podemos ver un ejemplo de un reporte generado por el proceso de **CI/CD** 
 
+![Ejecucion de pruebas de regresión](img/previewReporte.png?raw=true "Ejecuion de las pruebas de regresión")
+
 **[Reporte de pruebas](https://drive.usercontent.google.com/u/0/uc?id=1xh5yr4GpyYdiO1PcQXAFqogK7phuOHZ1&export=download)**
 
 ### 6.2 Herramientas Utilizadas
