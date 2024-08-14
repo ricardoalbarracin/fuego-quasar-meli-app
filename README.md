@@ -255,9 +255,38 @@ wire ./internal/infrastructure/di
 ```
 Esta integración con Wire ayuda a simplificar la gestión de dependencias y mejora la mantenibilidad del código en proyectos grandes.
 
-## 3. Configuración de AWS SAM
+## 3. Infraestructura AWS con AWS SAM
 
-### 3.1. Archivo `template.yaml`
+### Introducción
+
+AWS Serverless Application Model (AWS SAM) es una extensión de AWS CloudFormation que simplifica la creación y gestión de aplicaciones sin servidor. Permite definir la infraestructura de una aplicación serverless de forma declarativa y facilita la implementación de recursos en AWS.
+
+### Qué es AWS SAM
+
+AWS SAM es una herramienta que proporciona una sintaxis simplificada para definir recursos de aplicaciones sin servidor, como funciones Lambda, API Gateway, y bases de datos DynamoDB. SAM se integra con AWS CloudFormation, lo que permite utilizar todas las capacidades de este servicio para gestionar la infraestructura.
+
+### Componentes Principales de AWS SAM
+
+1. **Archivo `template.yaml`**: Archivo de plantilla en formato YAML donde se definen los recursos de la aplicación serverless. Utiliza una sintaxis específica de SAM para simplificar la configuración.
+
+2. **Funciones Lambda**: Servicios de cómputo sin servidor que ejecutan código en respuesta a eventos. SAM permite definir funciones Lambda y sus configuraciones en el archivo `template.yaml`.
+
+3. **API Gateway**: Servicio que proporciona una interfaz HTTP para interactuar con las funciones Lambda. SAM facilita la configuración de endpoints y métodos para la API.
+
+4. **DocumentDB**: Base de datos NoSQL administrada que se puede utilizar para almacenar datos de la aplicación. SAM permite definir tablas y sus propiedades.
+
+5. **Eventos**: Recursos que desencadenan funciones Lambda, como eventos de API Gateway, eventos de S3, o mensajes de SQS. SAM permite configurar estos eventos en el archivo de plantilla.
+   
+6. **SecretManager** AWS Secrets Manager le permite alternar, administrar y recuperar credenciales de bases de datos, claves de API y otros datos confidenciales durante su ciclo de vida..
+
+7. **cloudwatch** Amazon CloudWatch recopila y visualiza los registros, las métricas y los datos de evento en tiempo real en paneles automatizados para simplificar la infraestructura y el mantenimiento de aplicaciones.
+
+# Diagrama de componentes AWS
+![Infraestructura AWS](img/AWS.png?raw=true "Infraestructura AWS") 
+
+
+
+####  Archivo `template.yaml`
 
 El archivo `template.yaml` es el archivo principal de configuración para AWS SAM. Aquí está un ejemplo de cómo se vería este archivo:
 
@@ -351,7 +380,7 @@ Outputs:
     Value: !GetAtt FuegoQuasarFunctionRole.Arn
 
 ```
-### 3.2. Variables de Entorno
+###  Variables de Entorno
 Estas son las variables de entorno que usa la app para su correcto funcionamiento.
 - **`CONNECTION_SECRET_NAME: prod/connectionstringfuegoquasardb`** cadena con el nombre del secreto que tiene la cadena de conexion a **MongoDB**
 - **`KENOBI_X: -500`** posicion X del satelite kenobi
@@ -361,13 +390,13 @@ Estas son las variables de entorno que usa la app para su correcto funcionamient
 - **`SATO_X: 500`** posicion X del satelite sato
 - **`SATO_Y: 100`** posicion Y del satelite sato
 
-### 3.3. Despliegue con AWS SAM
+###  Despliegue con AWS SAM
 
-#### 3.3.1. Instalación de AWS SAM CLI
+####  Instalación de AWS SAM CLI
 
 Asegúrate de tener instalado AWS SAM CLI. Si no lo tienes, puedes instalarlo siguiendo las instrucciones en la [documentación oficial de AWS SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html).
 
-#### 3.3.2. Compilación del Proyecto
+####  Compilación del Proyecto
 
 Antes de desplegar la función, debes compilar el proyecto. Ejecuta el siguiente comando en el directorio raíz del proyecto:
 
@@ -404,7 +433,7 @@ Para asegurar la calidad y el estado del servicio se crean pruebas de consumo de
 Se pude consultar esta **[Coleccion Postam](https://lunar-sunset-766256.postman.co/workspace/Meli_Fire_Quasar~bd17065b-4543-4236-923b-8781260d6a56/collection/2242228-bbadee89-3d1d-434b-bb27-4220d2738fda?action=share&creator=2242228&active-environment=2242228-c25adb19-d282-4e15-ba47-4a3fec9549c3)**
 
 ![Pruebas de regresión](img/pruebasRegresion.png?raw=true "Pruebas de regresión")
-
+Pruebas de regresión implementadas con postman
 ## 6 Proceso Global de CI/CD con AWS SAM y GitHub Actions
 
 ### 6.1  Descripción Global del Proceso de CI/CD
@@ -412,7 +441,6 @@ Se pude consultar esta **[Coleccion Postam](https://lunar-sunset-766256.postman.
 #### 6.1.1. Desencadenamiento del Proceso
 
 El proceso de CI/CD se inicia automáticamente cuando hay un **push** a la rama `master` del repositorio en GitHub. Este proceso se encarga de construir y desplegar la aplicación en la infraestructura **AWS**, posterior a este proceso el sistema obtiene y ejecuta las pruebas necesarias para verificar el correcto funcionamiento de la aplicacion generando estos reportes de la ejecución de las mismas.
-
 
 #### 6.1.2. Compilación y Despliegue (CI)
 
@@ -422,12 +450,24 @@ El proceso de CI/CD se inicia automáticamente cuando hay un **push** a la rama 
 - La aplicación se **compila** utilizando el comando `sam build` de **AWS SAM** (Serverless Application Model).
 - Después de la compilación, la aplicación se **despliega** en **Amazon ECS** utilizando el comando `sam deploy`.
 
+![Pruebas de regresión](img/CICD.png?raw=true "Pruebas de regresión")
+
 #### 6.1.3. Pruebas (CD)
 
 - Después del despliegue, se instala **Node.js** en el ambiente de GitHub Actions para ejecutar herramientas basadas en Node.
 - Se instala **Newman**, el cliente de línea de comandos para ejecutar pruebas de API de Postman.
 - Las **pruebas de API** se ejecutan usando Newman para verificar que la aplicación funciona como se espera.
 - Los resultados de las pruebas se **suben** al repositorio de GitHub como artefactos para su revisión y análisis posterior.
+
+cuando se ejecutan las pruebas usando la herramienta **newman** nos genera en los logs de la ejecuión del pipeline los resultados de las pruebas ejecutadas como se muestra a continuación.
+![Ejecucion de pruebas de regresión](img/ejecucionPruebaCICD.png?raw=true "Ejecuion de las pruebas de regresión")
+Ejecuión de las pruebas de regresión
+
+ademas de esto **newman** genera un reporte detallado con el resultado de cada ejecuion y cada caso de pruba. aca podemos ver un ejemplo de un reporte generado por el proceso de **CI/CD** 
+
+![Ejecucion de pruebas de regresión](img/previewReporte.png?raw=true "Ejecuion de las pruebas de regresión")
+
+**[Reporte de pruebas](https://drive.usercontent.google.com/u/0/uc?id=1xh5yr4GpyYdiO1PcQXAFqogK7phuOHZ1&export=download)**
 
 ### 6.2 Herramientas Utilizadas
 
@@ -456,7 +496,7 @@ El proceso de CI/CD se inicia automáticamente cuando hay un **push** a la rama 
 - **Descripción**: Funcionalidad de GitHub que permite almacenar de forma segura las claves y credenciales necesarias para la autenticación y acceso a recursos externos.
 - **Función**: Almacena credenciales de AWS y claves API de Postman, utilizadas durante el proceso de CI/CD.
 
-## 7  Documentación de Seguridad del API con AWS Signature Version 4
+## 7  Seguridad del API con AWS Signature Version 4
 
 ### 7.1 Introducción
 
