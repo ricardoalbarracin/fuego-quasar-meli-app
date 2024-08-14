@@ -403,8 +403,6 @@ go test ./...
 Para asegurar la calidad y el estado del servicio se crean pruebas de consumo del api, teniendo en cuenta los diferentes casos de prueba expuestos en el reto propuesto, estas pruebas serán ejecutadas automaticamente en los procesos de CI/CD.
 Se pude consultar esta **[Coleccion Postam](https://lunar-sunset-766256.postman.co/workspace/Meli_Fire_Quasar~bd17065b-4543-4236-923b-8781260d6a56/collection/2242228-bbadee89-3d1d-434b-bb27-4220d2738fda?action=share&creator=2242228&active-environment=2242228-c25adb19-d282-4e15-ba47-4a3fec9549c3)**
 
-![Pruebas de regresión](img/pruebasRegresion.png?raw=true "Pruebas de regresión")
-
 ## 6 Proceso Global de CI/CD con AWS SAM y GitHub Actions
 
 ### 6.1  Descripción Global del Proceso de CI/CD
@@ -412,6 +410,10 @@ Se pude consultar esta **[Coleccion Postam](https://lunar-sunset-766256.postman.
 #### 6.1.1. Desencadenamiento del Proceso
 
 El proceso de CI/CD se inicia automáticamente cuando hay un **push** a la rama `master` del repositorio en GitHub. Este proceso se encarga de construir y desplegar la aplicación en la infraestructura **AWS**, posterior a este proceso el sistema obtiene y ejecuta las pruebas necesarias para verificar el correcto funcionamiento de la aplicacion generando estos reportes de la ejecución de las mismas.
+
+![Pruebas de regresión](img/pruebasRegresion.png?raw=true "Pruebas de regresión")
+Pruebas de regresión implementadas con postman
+
 
 
 #### 6.1.2. Compilación y Despliegue (CI)
@@ -428,6 +430,14 @@ El proceso de CI/CD se inicia automáticamente cuando hay un **push** a la rama 
 - Se instala **Newman**, el cliente de línea de comandos para ejecutar pruebas de API de Postman.
 - Las **pruebas de API** se ejecutan usando Newman para verificar que la aplicación funciona como se espera.
 - Los resultados de las pruebas se **suben** al repositorio de GitHub como artefactos para su revisión y análisis posterior.
+
+cuando se ejecutan las pruebas usando la herramienta **newman** nos genera en los logs de la ejecuión del pipeline los resultados de las pruebas ejecutadas como se muestra a continuación.
+![Ejecucion de pruebas de regresión](img/ejecucionPruebaCICD.png?raw=true "Ejecuion de las pruebas de regresión")
+Ejecuión de las pruebas de regresión
+
+ademas de esto **newman** genera un reporte detallado con el resultado de cada ejecuion y cada caso de pruba. aca podemos ver un ejemplo de un reporte generado por el proceso de **CI/CD** 
+
+**[Reporte de pruebas](img/ejecucionPruebaCICD.html)**
 
 ### 6.2 Herramientas Utilizadas
 
