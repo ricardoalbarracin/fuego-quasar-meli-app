@@ -361,9 +361,6 @@ Estas son las variables de entorno que usa la app para su correcto funcionamient
 - **`SATO_X: 500`** posicion X del satelite sato
 - **`SATO_Y: 100`** posicion Y del satelite sato
 
-
-
-
 ### 3.3. Despliegue con AWS SAM
 
 #### 3.3.1. Instalación de AWS SAM CLI
@@ -393,12 +390,17 @@ aws lambda invoke \
     --payload file://input.json \
     output.json
 ```
-## 5. Pruebas Unitarias
+## 5. Pruebas
 
-### 5.1. Ejecutar todas las pruebas
+### 5.1. Pruebas Unitarias
 
 Para ejecutar todas las pruebas unitarias del proyecto, usa el siguiente comando:
 
 ```sh
 go test ./...
 ```
+### 5.2 Pruebas de regresión
+Para asegurar la calidad y el estado del servicio se crean pruebas de consumo del api, teniendo en cuenta los diferentes casos de prueba expuestos en el reto propuesto, estas pruebas serán ejecutadas automaticamente en los procesos de CI/CD.
+Se pude consultar esta **[Coleccion Postam](https://lunar-sunset-766256.postman.co/workspace/Meli_Fire_Quasar~bd17065b-4543-4236-923b-8781260d6a56/collection/2242228-bbadee89-3d1d-434b-bb27-4220d2738fda?action=share&creator=2242228&active-environment=2242228-c25adb19-d282-4e15-ba47-4a3fec9549c3)**
+
+![Pruebas de regresión](img/pruebasRegresion.png?raw=true "Pruebas de regresión")
