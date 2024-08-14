@@ -456,3 +456,57 @@ El proceso de CI/CD se inicia automáticamente cuando hay un **push** a la rama 
 - **Descripción**: Funcionalidad de GitHub que permite almacenar de forma segura las claves y credenciales necesarias para la autenticación y acceso a recursos externos.
 - **Función**: Almacena credenciales de AWS y claves API de Postman, utilizadas durante el proceso de CI/CD.
 
+## 7  Documentación de Seguridad del API con AWS Signature Version 4
+
+### 7.1 Introducción
+
+La seguridad de una API es esencial para proteger los datos y servicios que ofrece. AWS proporciona un mecanismo de autenticación robusto conocido como **AWS Signature Version 4 (SigV4)**, que se utiliza para autenticar y autorizar solicitudes a las APIs en AWS. Este método garantiza que las solicitudes provengan de entidades autorizadas y que los datos en tránsito no hayan sido manipulados.
+
+### 7.2  Cómo Funciona la Autenticación con SigV4
+
+El proceso de autenticación con SigV4 sigue los siguientes pasos:
+
+1. **Recopilar Información de la Solicitud**: Incluye el método HTTP, la URL, los encabezados HTTP, y el cuerpo de la solicitud.
+2. **Crear una Solicitud Canonical**: Formatear la información recopilada en una solicitud estructurada y normalizada.
+3. **Crear la String to Sign**: Combinar la solicitud canonical con otros datos de la solicitud para crear una cadena de texto única.
+4. **Derivar la Clave de Firma**: Utilizar la Secret Key del usuario de IAM para generar una clave de firma única.
+5. **Crear la Firma**: Utilizar la clave de firma para crear una firma criptográfica de la string to sign.
+6. **Agregar la Firma a la Solicitud**: Incluir la firma en el encabezado `Authorization` de la solicitud HTTP.
+
+### 7.3 Formato del Encabezado `Authorization`
+
+```plaintext
+Authorization: AWS4-HMAC-SHA256 Credential=<Access Key ID>/<Date>/<Region>/<Service>/aws4_request, SignedHeaders=<Signed Headers>, Signature=<Signature>
+```
+
+### 7.4 Implementación en Postman
+
+Para implementar este proceso en Postman:
+
+1. **Abrir Postman**: Iniciar la aplicación Postman.
+2. **Crear una Nueva Solicitud**: Hacer clic en "New" y seleccionar "Request".
+3. **Configurar la Solicitud**: Ingresar la URL de la API y seleccionar el método HTTP apropiado.
+4. **Agregar Encabezados**: En la sección "Headers", agregar los encabezados necesarios (`host`, `x-amz-date`, etc.).
+5. **Firmar la Solicitud**: Antes de enviar la solicitud, usar una herramienta o script para generar el encabezado `Authorization` siguiendo los pasos descritos anteriormente.
+6. **Enviar la Solicitud**: Hacer clic en "Send" para enviar la solicitud a la API.
+
+### 7.5 Ventajas de Usar AWS Signature Version 4
+
+- **Seguridad Mejorada**: Asegura que solo los usuarios autorizados puedan acceder a los recursos.
+- **Integridad de Datos**: Garantiza que los datos no sean manipulados durante el tránsito.
+- **Flexibilidad**: Funciona con una variedad de métodos HTTP y tipos de solicitudes.
+- **Compatibilidad**: Es compatible con todos los servicios de AWS que soportan autenticación mediante SigV4.
+
+### 7.6 AWS Identity and Access Management (IAM)
+
+#### ¿Qué es IAM?
+
+AWS Identity and Access Management (IAM) es un servicio que permite administrar el acceso a los recursos de AWS de manera segura. Con IAM, puedes:
+
+- **Crear Usuarios y Roles**: Definir identidades que puedan autenticarse y realizar acciones en AWS.
+- **Administrar Permisos**: Asignar políticas que especifiquen qué acciones puede realizar una identidad y en qué recursos.
+- **Configurar Autenticación Multi-Factor (MFA)**: Añadir una capa extra de seguridad mediante la configuración de autenticación de dos factores.
+
+
+
+
