@@ -24,7 +24,10 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
       - name: path test
-        run: cd ./fuego-quasar-app
+        run: |
+          cd ./fuego-quasar-app
+          ls
+        
         
       - name: Install dependencies
         run: go get .
