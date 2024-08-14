@@ -25,6 +25,8 @@ jobs:
           go-version: ${{ matrix.go-version }}
       - name: path test
         run: cd ./fuego-quasar-app/test
+      - name: Install dependencies
+        run: go get .
       - name: Test with Go
         run: go test -json > TestResults-${{ matrix.go-version }}.json
       - name: Upload Go test results
