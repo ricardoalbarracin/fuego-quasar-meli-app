@@ -205,7 +205,7 @@ La capa `interfaces` define los adaptadores que transforman las solicitudes y re
 - **`handler/`**: Maneja las solicitudes y respuestas de la interfaz de la aplicación.
   - `lambdaHandler.go`: Adaptador para manejar las solicitudes provenientes de AWS Lambda, transformándolas en un formato que puede ser procesado por los servicios de la aplicación.
 
-### 2.2 Inyección de dependencias co Wire
+### 2.2 Inyección de dependencias con Wire
 
 Wire es una herramienta para la inyección de dependencias en Go, creada por Google. Facilita la configuración automática de dependencias y la gestión de la inyección de dependencias en proyectos complejos. Aquí se describe cómo se integra Wire en el proyecto:
 
@@ -320,7 +320,7 @@ aws lambda invoke \
 ## 5. Pruebas
 
 ### 5.1. Pruebas Unitarias
-Contiene las pruebas unitarias para asegurar que la lógica de la aplicación funcione correctamente.
+Contiene las pruebas unitarias para asegurar que la lógica de la aplicación funcione correctamente, se ejecutan el proceso de **CI/CD** en caso de encontrar algun caso de prueba fallido no realizara el despliegue y finalizara la ejecucion.
 
 - `decodeMessageService_test.go`: Pruebas unitarias para el servicio de decodificación de mensajes.
 - `triangulationService_test.go`: Pruebas unitarias para el servicio de triangulación.
