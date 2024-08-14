@@ -23,6 +23,9 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
+      - name: path test
+        run: cd ./fuego-quasar-app
+        
       - name: Install dependencies
         run: go get .
         
