@@ -432,6 +432,8 @@ go test ./...
 Para asegurar la calidad y el estado del servicio se crean pruebas de consumo del api, teniendo en cuenta los diferentes casos de prueba expuestos en el reto propuesto, estas pruebas serán ejecutadas automaticamente en los procesos de CI/CD.
 Se pude consultar esta **[Coleccion Postam](https://lunar-sunset-766256.postman.co/workspace/Meli_Fire_Quasar~bd17065b-4543-4236-923b-8781260d6a56/collection/2242228-bbadee89-3d1d-434b-bb27-4220d2738fda?action=share&creator=2242228&active-environment=2242228-c25adb19-d282-4e15-ba47-4a3fec9549c3)**
 
+![Pruebas de regresión](img/pruebasRegresion.png?raw=true "Pruebas de regresión")
+Pruebas de regresión implementadas con postman
 ## 6 Proceso Global de CI/CD con AWS SAM y GitHub Actions
 
 ### 6.1  Descripción Global del Proceso de CI/CD
@@ -440,11 +442,6 @@ Se pude consultar esta **[Coleccion Postam](https://lunar-sunset-766256.postman.
 
 El proceso de CI/CD se inicia automáticamente cuando hay un **push** a la rama `master` del repositorio en GitHub. Este proceso se encarga de construir y desplegar la aplicación en la infraestructura **AWS**, posterior a este proceso el sistema obtiene y ejecuta las pruebas necesarias para verificar el correcto funcionamiento de la aplicacion generando estos reportes de la ejecución de las mismas.
 
-![Pruebas de regresión](img/pruebasRegresion.png?raw=true "Pruebas de regresión")
-Pruebas de regresión implementadas con postman
-
-
-
 #### 6.1.2. Compilación y Despliegue (CI)
 
 - **GitHub Actions** se utiliza como la plataforma de automatización que orquesta todo el flujo de trabajo de CI/CD.
@@ -452,6 +449,8 @@ Pruebas de regresión implementadas con postman
 - Las **credenciales de AWS** se configuran utilizando `aws-actions/configure-aws-credentials` para permitir que GitHub Actions interactúe con los servicios de AWS.
 - La aplicación se **compila** utilizando el comando `sam build` de **AWS SAM** (Serverless Application Model).
 - Después de la compilación, la aplicación se **despliega** en **Amazon ECS** utilizando el comando `sam deploy`.
+
+![Pruebas de regresión](img/CICD.png?raw=true "Pruebas de regresión")
 
 #### 6.1.3. Pruebas (CD)
 
@@ -497,7 +496,7 @@ ademas de esto **newman** genera un reporte detallado con el resultado de cada e
 - **Descripción**: Funcionalidad de GitHub que permite almacenar de forma segura las claves y credenciales necesarias para la autenticación y acceso a recursos externos.
 - **Función**: Almacena credenciales de AWS y claves API de Postman, utilizadas durante el proceso de CI/CD.
 
-## 7  Documentación de Seguridad del API con AWS Signature Version 4
+## 7  Seguridad del API con AWS Signature Version 4
 
 ### 7.1 Introducción
 
