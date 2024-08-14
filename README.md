@@ -205,14 +205,7 @@ La capa `interfaces` define los adaptadores que transforman las solicitudes y re
 - **`handler/`**: Maneja las solicitudes y respuestas de la interfaz de la aplicación.
   - `lambdaHandler.go`: Adaptador para manejar las solicitudes provenientes de AWS Lambda, transformándolas en un formato que puede ser procesado por los servicios de la aplicación.
 
-### 2.2 `test/`
-
-Contiene las pruebas unitarias para asegurar que la lógica de la aplicación funcione correctamente.
-
-- `decodeMessageService_test.go`: Pruebas unitarias para el servicio de decodificación de mensajes.
-- `triangulationService_test.go`: Pruebas unitarias para el servicio de triangulación.
-
-### 2.3 Inyección de dependencias co Wire
+### 2.2 Inyección de dependencias co Wire
 
 Wire es una herramienta para la inyección de dependencias en Go, creada por Google. Facilita la configuración automática de dependencias y la gestión de la inyección de dependencias en proyectos complejos. Aquí se describe cómo se integra Wire en el proyecto:
 
@@ -220,9 +213,9 @@ Wire es una herramienta para la inyección de dependencias en Go, creada por Goo
 
 - **`wire_gen.go`**: Archivo generado automáticamente por Wire. Contiene el código que Wire genera en base a las configuraciones de `wire.go`. No debes modificar este archivo manualmente; Wire lo actualiza cuando ejecutas el comando de generación.
 
-#### 2.3.1  Ejemplo de Uso de Wire
+#### 2.2.1  Ejemplo de Uso de Wire
 
-##### 2.3.1.1 **Definir Proveedores en `wire.go`**:
+##### 2.2.1.1 **Definir Proveedores en `wire.go`**:
 
    ```go
    ///go:build wireinject
@@ -246,7 +239,7 @@ func InitializeMyService() handler.LambdaHandler {
 }
 
    ```
-##### 2.3.1.2 Generar el Código de Inyección de Dependencias:
+##### 2.2.1.2 Generar el Código de Inyección de Dependencias:
 
 Ejecuta el siguiente comando para generar el archivo wire_gen.go:
 
@@ -327,6 +320,10 @@ aws lambda invoke \
 ## 5. Pruebas
 
 ### 5.1. Pruebas Unitarias
+Contiene las pruebas unitarias para asegurar que la lógica de la aplicación funcione correctamente.
+
+- `decodeMessageService_test.go`: Pruebas unitarias para el servicio de decodificación de mensajes.
+- `triangulationService_test.go`: Pruebas unitarias para el servicio de triangulación.
 
 Para ejecutar todas las pruebas unitarias del proyecto, usa el siguiente comando:
 
