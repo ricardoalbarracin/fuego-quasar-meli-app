@@ -404,3 +404,55 @@ Para asegurar la calidad y el estado del servicio se crean pruebas de consumo de
 Se pude consultar esta **[Coleccion Postam](https://lunar-sunset-766256.postman.co/workspace/Meli_Fire_Quasar~bd17065b-4543-4236-923b-8781260d6a56/collection/2242228-bbadee89-3d1d-434b-bb27-4220d2738fda?action=share&creator=2242228&active-environment=2242228-c25adb19-d282-4e15-ba47-4a3fec9549c3)**
 
 ![Pruebas de regresión](img/pruebasRegresion.png?raw=true "Pruebas de regresión")
+
+## 6 Proceso Global de CI/CD con AWS SAM y GitHub Actions
+
+### 6.1  Descripción Global del Proceso de CI/CD
+
+#### 6.1.1. Desencadenamiento del Proceso
+
+El proceso de CI/CD se inicia automáticamente cuando hay un **push** a la rama `master` del repositorio en GitHub. Este proceso se encarga de construir y desplegar la aplicación en la infraestructura **AWS**, posterior a este proceso el sistema obtiene y ejecuta las pruebas necesarias para verificar el correcto funcionamiento de la aplicacion generando estos reportes de la ejecución de las mismas.
+
+
+#### 6.1.2. Compilación y Despliegue (CI)
+
+- **GitHub Actions** se utiliza como la plataforma de automatización que orquesta todo el flujo de trabajo de CI/CD.
+- El código se **clona** del repositorio usando la acción `actions/checkout`.
+- Las **credenciales de AWS** se configuran utilizando `aws-actions/configure-aws-credentials` para permitir que GitHub Actions interactúe con los servicios de AWS.
+- La aplicación se **compila** utilizando el comando `sam build` de **AWS SAM** (Serverless Application Model).
+- Después de la compilación, la aplicación se **despliega** en **Amazon ECS** utilizando el comando `sam deploy`.
+
+#### 6.1.3. Pruebas (CD)
+
+- Después del despliegue, se instala **Node.js** en el ambiente de GitHub Actions para ejecutar herramientas basadas en Node.
+- Se instala **Newman**, el cliente de línea de comandos para ejecutar pruebas de API de Postman.
+- Las **pruebas de API** se ejecutan usando Newman para verificar que la aplicación funciona como se espera.
+- Los resultados de las pruebas se **suben** al repositorio de GitHub como artefactos para su revisión y análisis posterior.
+
+### 6.2 Herramientas Utilizadas
+
+#### 6.2.1  GitHub Actions
+
+- **Descripción**: Plataforma de automatización CI/CD que permite crear flujos de trabajo personalizados para compilar, probar y desplegar código directamente desde GitHub.
+- **Función**: Orquesta todo el proceso de CI/CD, desde la compilación hasta el despliegue y pruebas.
+
+#### 6.2.2 AWS SAM (Serverless Application Model)
+
+- **Descripción**: Framework de código abierto para crear aplicaciones serverless en AWS. Simplifica el proceso de definición y despliegue de recursos en AWS.
+- **Función**: Se utiliza para compilar y desplegar la aplicación Go en un entorno de AWS, permitiendo un despliegue fácil y automatizado.
+
+#### 6.2.3 Newman (CLI de Postman)
+
+- **Descripción**: Cliente de línea de comandos para ejecutar colecciones de pruebas de API de Postman desde cualquier lugar.
+- **Función**: Ejecuta las pruebas de API de Postman para verificar la funcionalidad de la aplicación desplegada en AWS.
+
+#### 6.2.4 Node.js
+
+- **Descripción**: Entorno de ejecución de JavaScript que permite ejecutar código JavaScript en el lado del servidor.
+- **Función**: Necesario para instalar y ejecutar Newman, que está escrito en JavaScript.
+
+#### 6.2.5 Secrets de GitHub
+
+- **Descripción**: Funcionalidad de GitHub que permite almacenar de forma segura las claves y credenciales necesarias para la autenticación y acceso a recursos externos.
+- **Función**: Almacena credenciales de AWS y claves API de Postman, utilizadas durante el proceso de CI/CD.
+
