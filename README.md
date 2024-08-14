@@ -255,9 +255,38 @@ wire ./internal/infrastructure/di
 ```
 Esta integración con Wire ayuda a simplificar la gestión de dependencias y mejora la mantenibilidad del código en proyectos grandes.
 
-## 3. Configuración de AWS SAM
+## 3. Infraestructura AWS con AWS SAM
 
-### 3.1. Archivo `template.yaml`
+### Introducción
+
+AWS Serverless Application Model (AWS SAM) es una extensión de AWS CloudFormation que simplifica la creación y gestión de aplicaciones sin servidor. Permite definir la infraestructura de una aplicación serverless de forma declarativa y facilita la implementación de recursos en AWS.
+
+### Qué es AWS SAM
+
+AWS SAM es una herramienta que proporciona una sintaxis simplificada para definir recursos de aplicaciones sin servidor, como funciones Lambda, API Gateway, y bases de datos DynamoDB. SAM se integra con AWS CloudFormation, lo que permite utilizar todas las capacidades de este servicio para gestionar la infraestructura.
+
+### Componentes Principales de AWS SAM
+
+1. **Archivo `template.yaml`**: Archivo de plantilla en formato YAML donde se definen los recursos de la aplicación serverless. Utiliza una sintaxis específica de SAM para simplificar la configuración.
+
+2. **Funciones Lambda**: Servicios de cómputo sin servidor que ejecutan código en respuesta a eventos. SAM permite definir funciones Lambda y sus configuraciones en el archivo `template.yaml`.
+
+3. **API Gateway**: Servicio que proporciona una interfaz HTTP para interactuar con las funciones Lambda. SAM facilita la configuración de endpoints y métodos para la API.
+
+4. **DocumentDB**: Base de datos NoSQL administrada que se puede utilizar para almacenar datos de la aplicación. SAM permite definir tablas y sus propiedades.
+
+5. **Eventos**: Recursos que desencadenan funciones Lambda, como eventos de API Gateway, eventos de S3, o mensajes de SQS. SAM permite configurar estos eventos en el archivo de plantilla.
+   
+6. **SecretManager** AWS Secrets Manager le permite alternar, administrar y recuperar credenciales de bases de datos, claves de API y otros datos confidenciales durante su ciclo de vida..
+
+7. **cloudwatch** Amazon CloudWatch recopila y visualiza los registros, las métricas y los datos de evento en tiempo real en paneles automatizados para simplificar la infraestructura y el mantenimiento de aplicaciones.
+
+# Diagrama de componentes AWS
+![Infraestructura AWS](img/AWS.png?raw=true "Infraestructura AWS") 
+
+
+
+####  Archivo `template.yaml`
 
 El archivo `template.yaml` es el archivo principal de configuración para AWS SAM. Aquí está un ejemplo de cómo se vería este archivo:
 
@@ -351,7 +380,7 @@ Outputs:
     Value: !GetAtt FuegoQuasarFunctionRole.Arn
 
 ```
-### 3.2. Variables de Entorno
+###  Variables de Entorno
 Estas son las variables de entorno que usa la app para su correcto funcionamiento.
 - **`CONNECTION_SECRET_NAME: prod/connectionstringfuegoquasardb`** cadena con el nombre del secreto que tiene la cadena de conexion a **MongoDB**
 - **`KENOBI_X: -500`** posicion X del satelite kenobi
@@ -361,13 +390,13 @@ Estas son las variables de entorno que usa la app para su correcto funcionamient
 - **`SATO_X: 500`** posicion X del satelite sato
 - **`SATO_Y: 100`** posicion Y del satelite sato
 
-### 3.3. Despliegue con AWS SAM
+###  Despliegue con AWS SAM
 
-#### 3.3.1. Instalación de AWS SAM CLI
+####  Instalación de AWS SAM CLI
 
 Asegúrate de tener instalado AWS SAM CLI. Si no lo tienes, puedes instalarlo siguiendo las instrucciones en la [documentación oficial de AWS SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html).
 
-#### 3.3.2. Compilación del Proyecto
+####  Compilación del Proyecto
 
 Antes de desplegar la función, debes compilar el proyecto. Ejecuta el siguiente comando en el directorio raíz del proyecto:
 
