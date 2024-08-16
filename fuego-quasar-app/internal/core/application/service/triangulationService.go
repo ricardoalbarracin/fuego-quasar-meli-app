@@ -7,10 +7,12 @@ import (
 	"math"
 )
 
-type TriangulationService struct{}
+type TriangulationService struct {
+	logService port.LogService
+}
 
-func NewTriangulationService() port.TriangulationService {
-	return TriangulationService{}
+func NewTriangulationService(logService port.LogService) port.TriangulationService {
+	return TriangulationService{logService: logService}
 }
 func (t TriangulationService) GetLocation(p1, p2, p3 model.Point, d1, d2, d3 float64) (model.Point, error) {
 

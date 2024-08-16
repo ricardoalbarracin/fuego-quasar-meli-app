@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fuego-quasar-app/internal/core/application/service"
 	"testing"
+
+	"github.com/golang/mock/gomock"
 )
 
 var (
@@ -12,7 +14,11 @@ var (
 )
 
 func TestDecodeMessageService_GetMessage(t *testing.T) {
-	service := service.NewDecodeMessageService() // Asegúrate de crear la instancia del servicio
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	log := NewMockLogService(ctrl)
+	service := service.NewDecodeMessageService(log) // Asegúrate de crear la instancia del servicio
 
 	tests := []struct {
 		name    string

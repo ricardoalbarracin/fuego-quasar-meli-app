@@ -12,10 +12,13 @@ var (
 	ErrEmptyMessageResult = errors.New("resulting message is empty")
 )
 
-type DecodeMessageService struct{}
+type DecodeMessageService struct {
+	logService port.LogService
+}
 
-func NewDecodeMessageService() port.DecodeMessageService {
-	return DecodeMessageService{}
+func NewDecodeMessageService(logService port.LogService) port.DecodeMessageService {
+
+	return DecodeMessageService{logService: logService}
 }
 
 func (mp DecodeMessageService) GetMessage(message [][]string) (string, error) {

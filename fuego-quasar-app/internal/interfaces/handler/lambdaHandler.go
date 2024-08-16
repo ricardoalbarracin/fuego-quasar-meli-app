@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fuego-quasar-app/internal/core/domain/model"
 	"fuego-quasar-app/internal/core/domain/port"
-	"log"
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -16,13 +15,15 @@ type LambdaHandler struct {
 	secretManagerService port.SecretManagerService
 	satelliteRepository  port.SatelliteRepository
 	fuegoQuasarService   port.FuegoQuasarService
+	logService           port.LogService
 }
 
-func NewLambdaHandler(triangulationService port.TriangulationService, decodeMessageService port.DecodeMessageService, secretManagerService port.SecretManagerService, satelliteRepository port.SatelliteRepository, fuegoQuasarService port.FuegoQuasarService) LambdaHandler {
-	return LambdaHandler{triangulationService: triangulationService, decodeMessageService: decodeMessageService, secretManagerService: secretManagerService, satelliteRepository: satelliteRepository, fuegoQuasarService: fuegoQuasarService}
+func NewLambdaHandler(logService port.LogService, triangulationService port.TriangulationService, decodeMessageService port.DecodeMessageService, secretManagerService port.SecretManagerService, satelliteRepository port.SatelliteRepository, fuegoQuasarService port.FuegoQuasarService) LambdaHandler {
+	return LambdaHandler{logService: logService, triangulationService: triangulationService, decodeMessageService: decodeMessageService, secretManagerService: secretManagerService, satelliteRepository: satelliteRepository, fuegoQuasarService: fuegoQuasarService}
 }
 
 func (h LambdaHandler) HandlePostRequestTopsecret_split(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
 	body := request.Body
 	var satellite model.Satellites
 
@@ -31,7 +32,7 @@ func (h LambdaHandler) HandlePostRequestTopsecret_split(request events.APIGatewa
 	// Deserializar el cuerpo JSON a la estructura RequestBody
 	err := json.Unmarshal([]byte(body), &satellite)
 	if err != nil {
-		log.Printf("Error al deserializar el cuerpo de la solicitud: %v", err)
+		h.logService.Info("HandleRequest:", "error", err)
 		return events.APIGatewayProxyResponse{
 			StatusCode: 400,
 			Body:       "Error al procesar el cuerpo de la solicitud. Daat",
@@ -79,6 +80,7 @@ func (h LambdaHandler) HandleGetRequestTopsecret_split(request events.APIGateway
 }
 
 func (h LambdaHandler) HandlePostRequestTopsecret(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
 	body := request.Body
 	var satellites []model.Satellites
 
@@ -87,7 +89,7 @@ func (h LambdaHandler) HandlePostRequestTopsecret(request events.APIGatewayProxy
 	// Deserializar el cuerpo JSON a la estructura RequestBody
 	err := json.Unmarshal([]byte(body), &satellites)
 	if err != nil {
-		log.Printf("Error al deserializar el cuerpo de la solicitud: %v", err)
+		h.logService.Info("HandleRequest:", "error", err)
 		return events.APIGatewayProxyResponse{
 			StatusCode: 400,
 			Body:       "Error al procesar el cuerpo de la solicitud.",
@@ -120,6 +122,8 @@ func (h LambdaHandler) HandlePostRequestTopsecret(request events.APIGatewayProxy
 }
 
 func (h LambdaHandler) HandleRequest(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
+	h.logService.Info("HandleRequest:", "request", request)
 
 	switch request.Path {
 	case "/topsecret":

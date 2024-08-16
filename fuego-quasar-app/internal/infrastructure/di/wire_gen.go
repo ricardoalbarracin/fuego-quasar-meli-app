@@ -9,6 +9,7 @@ package di
 import (
 	"fuego-quasar-app/internal/core/application/service"
 	"fuego-quasar-app/internal/infrastructure/awsSecret"
+	"fuego-quasar-app/internal/infrastructure/log"
 	"fuego-quasar-app/internal/infrastructure/mongodb"
 	"fuego-quasar-app/internal/infrastructure/repository"
 	"fuego-quasar-app/internal/interfaces/handler"
@@ -17,12 +18,13 @@ import (
 // Injectors from wire.go:
 
 func InitializeMyService() handler.LambdaHandler {
-	triangulationService := service.NewTriangulationService()
-	decodeMessageService := service.NewDecodeMessageService()
+	logService := infraestructure.NewLog()
+	triangulationService := service.NewTriangulationService(logService)
+	decodeMessageService := service.NewDecodeMessageService(logService)
 	secretManagerService := awsSecret.NewAWSSecretManagerService()
 	client := mongodb.NewMongoClient(secretManagerService)
 	satelliteRepository := repository.NewSatelliteRepositoryMongo(client)
 	fuegoQuasarService := service.NewFuegoQuasarService(satelliteRepository, decodeMessageService, triangulationService)
-	lambdaHandler := handler.NewLambdaHandler(triangulationService, decodeMessageService, secretManagerService, satelliteRepository, fuegoQuasarService)
+	lambdaHandler := handler.NewLambdaHandler(logService, triangulationService, decodeMessageService, secretManagerService, satelliteRepository, fuegoQuasarService)
 	return lambdaHandler
 }

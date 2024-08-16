@@ -3,13 +3,14 @@ package service
 import (
 	"fuego-quasar-app/internal/core/application/service"
 	"fuego-quasar-app/internal/core/domain/model"
+	infraestructure "fuego-quasar-app/internal/infrastructure/log"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTriangulationService_GetLocation(t *testing.T) {
-	service := service.NewTriangulationService()
+	service := service.NewTriangulationService(infraestructure.NewLog())
 
 	tests := []struct {
 		name       string
