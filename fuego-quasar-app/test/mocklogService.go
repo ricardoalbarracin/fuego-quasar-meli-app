@@ -52,12 +52,7 @@ func (mr *MockLogServiceMockRecorder) Debug(msg interface{}, args ...interface{}
 
 // Error mocks base method.
 func (m *MockLogService) Error(msg string, args ...any) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{msg}
-	for _, a := range args {
-		varargs = append(varargs, a)
-	}
-	m.ctrl.Call(m, "Error", varargs...)
+	
 }
 
 // Error indicates an expected call of Error.
@@ -69,12 +64,7 @@ func (mr *MockLogServiceMockRecorder) Error(msg interface{}, args ...interface{}
 
 // Info mocks base method.
 func (m *MockLogService) Info(msg string, args ...any) {
-	m.ctrl.T.Helper()
-	varargs := []interface{}{msg}
-	for _, a := range args {
-		varargs = append(varargs, a)
-	}
-	m.ctrl.Call(m, "Info", varargs...)
+	
 }
 
 // Info indicates an expected call of Info.

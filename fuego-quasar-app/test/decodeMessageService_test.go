@@ -18,6 +18,7 @@ func TestDecodeMessageService_GetMessage(t *testing.T) {
 	defer ctrl.Finish()
 
 	log := NewMockLogService(ctrl)
+
 	service := service.NewDecodeMessageService(log) // Asegúrate de crear la instancia del servicio
 
 	tests := []struct {
