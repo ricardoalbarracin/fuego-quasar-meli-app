@@ -205,14 +205,7 @@ La capa `interfaces` define los adaptadores que transforman las solicitudes y re
 - **`handler/`**: Maneja las solicitudes y respuestas de la interfaz de la aplicación.
   - `lambdaHandler.go`: Adaptador para manejar las solicitudes provenientes de AWS Lambda, transformándolas en un formato que puede ser procesado por los servicios de la aplicación.
 
-### 2.2 `test/`
-
-Contiene las pruebas unitarias para asegurar que la lógica de la aplicación funcione correctamente.
-
-- `decodeMessageService_test.go`: Pruebas unitarias para el servicio de decodificación de mensajes.
-- `triangulationService_test.go`: Pruebas unitarias para el servicio de triangulación.
-
-### 2.3 Inyección de dependencias co Wire
+### 2.2 Inyección de dependencias con Wire
 
 Wire es una herramienta para la inyección de dependencias en Go, creada por Google. Facilita la configuración automática de dependencias y la gestión de la inyección de dependencias en proyectos complejos. Aquí se describe cómo se integra Wire en el proyecto:
 
@@ -220,9 +213,9 @@ Wire es una herramienta para la inyección de dependencias en Go, creada por Goo
 
 - **`wire_gen.go`**: Archivo generado automáticamente por Wire. Contiene el código que Wire genera en base a las configuraciones de `wire.go`. No debes modificar este archivo manualmente; Wire lo actualiza cuando ejecutas el comando de generación.
 
-#### 2.3.1  Ejemplo de Uso de Wire
+#### 2.2.1  Ejemplo de Uso de Wire
 
-##### 2.3.1.1 **Definir Proveedores en `wire.go`**:
+##### 2.2.1.1 **Definir Proveedores en `wire.go`**:
 
    ```go
    ///go:build wireinject
@@ -246,7 +239,7 @@ func InitializeMyService() handler.LambdaHandler {
 }
 
    ```
-##### 2.3.1.2 Generar el Código de Inyección de Dependencias:
+##### 2.2.1.2 Generar el Código de Inyección de Dependencias:
 
 Ejecuta el siguiente comando para generar el archivo wire_gen.go:
 
@@ -285,101 +278,6 @@ AWS SAM es una herramienta que proporciona una sintaxis simplificada para defini
 ![Infraestructura AWS](img/AWS.png?raw=true "Infraestructura AWS") 
 
 
-
-####  Archivo `template.yaml`
-
-El archivo `template.yaml` es el archivo principal de configuración para AWS SAM. Aquí está un ejemplo de cómo se vería este archivo:
-
-```yaml
-AWSTemplateFormatVersion: '2010-09-09'
-Transform: AWS::Serverless-2016-10-31
-Description: >
-  fuego-quasar-meli-app
-
-  Plantilla SAM  para la función fuego-quasar-meli-app
-
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
-Globals:
-  Function:
-    Timeout: 5
-    MemorySize: 128
-
-    Tracing: Active
-    # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
-    LoggingConfig:
-      LogFormat: JSON
-  Api:
-    TracingEnabled: true
-Resources:
-  FuegoQuasarFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-    Metadata:
-      BuildMethod: go1.x
-    Properties:
-      CodeUri: fuego-quasar-app/
-      Handler: bootstrap
-      Runtime: provided.al2023
-      Architectures:
-      - x86_64
-      Events:
-        Topsecret:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            Path: /topsecret
-            Method: POST
-        PosttopsecretSplit:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            Path: /topsecret_split
-            Method: POST
-        GettopsecretSplit:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            Path: /topsecret_split
-            Method: GET
-      Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
-        Variables:
-          CONNECTION_SECRET_NAME: prod/connectionstringfuegoquasardb
-          KENOBI_X: -500
-          KENOBI_Y: -200
-          SKYWALKER_X: 100
-          SKYWALKER_Y: -100
-          SATO_X: 500
-          SATO_Y: 100
-
-
-
-  ApplicationResourceGroup:
-    Type: AWS::ResourceGroups::Group
-    Properties:
-      Name:
-        Fn::Sub: ApplicationInsights-SAM-${AWS::StackName}
-      ResourceQuery:
-        Type: CLOUDFORMATION_STACK_1_0
-  ApplicationInsightsMonitoring:
-    Type: AWS::ApplicationInsights::Application
-    Properties:
-      ResourceGroupName:
-        Ref: ApplicationResourceGroup
-      AutoConfigurationEnabled: 'true'
-Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  FuegoQuasardAPI:
-    Description: API Gateway endpoint URL for Prod environment for First Function
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/topsecret/"
-  FuegoQuasardAPI2:
-    Description: API Gateway endpoint URL for Prod environment for First Function
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/topsecret_split/"
-  FuegoQuasarFunction:
-    Description: First Lambda Function ARN
-    Value: !GetAtt FuegoQuasarFunction.Arn
-  FuegoQuasarFunctionIamRole:
-    Description: Implicit IAM Role created for Fuego Quasarfunction
-    Value: !GetAtt FuegoQuasarFunctionRole.Arn
-
-```
 ###  Variables de Entorno
 Estas son las variables de entorno que usa la app para su correcto funcionamiento.
 - **`CONNECTION_SECRET_NAME: prod/connectionstringfuegoquasardb`** cadena con el nombre del secreto que tiene la cadena de conexion a **MongoDB**
@@ -422,6 +320,10 @@ aws lambda invoke \
 ## 5. Pruebas
 
 ### 5.1. Pruebas Unitarias
+Contiene las pruebas unitarias para asegurar que la lógica de la aplicación funcione correctamente, se ejecutan el proceso de **CI/CD** en caso de encontrar algun caso de prueba fallido no realizara el despliegue y finalizara la ejecucion.
+
+- `decodeMessageService_test.go`: Pruebas unitarias para el servicio de decodificación de mensajes.
+- `triangulationService_test.go`: Pruebas unitarias para el servicio de triangulación.
 
 Para ejecutar todas las pruebas unitarias del proyecto, usa el siguiente comando:
 
