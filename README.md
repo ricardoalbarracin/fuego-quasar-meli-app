@@ -117,12 +117,15 @@ fuego-quasar-app/
 │   │           ├── satelliteRepository.go
 │   │           ├── secretManagerService.go
 │   │           └── triangulationService.go
+│   │           └── logImplementation.go
 │   ├── infrastructure/
 │   │   ├── awsSecret/
 │   │   │   └── AWSSecretManagerService.go
 │   │   ├── di/
 │   │   │   ├── wire.go
 │   │   │   └── wire_gen.go
+│   │   ├── log/
+│   │   │   └── logImplementation.go
 │   │   ├── mongodb/
 │   │   │   └── mongoClient.go
 │   │   └── repository/
@@ -322,6 +325,14 @@ aws lambda invoke \
 ### 5.1. Pruebas Unitarias
 Contiene las pruebas unitarias para asegurar que la lógica de la aplicación funcione correctamente, se ejecutan el proceso de **CI/CD** en caso de encontrar algun caso de prueba fallido no realizara el despliegue y finalizara la ejecucion.
 
+#### Uso de GoMock en las Pruebas
+Durante el desarrollo del proyecto, utilizamos GoMock para crear pruebas unitarias más robustas y confiables. GoMock nos permitió simular las dependencias externas, asegurando que las pruebas se centraran en la lógica interna del código. A continuación, se describe cómo se implementó GoMock en nuestras pruebas.
+
+Uso de GoMock con el Servicio de Registro (LogService)
+En este proyecto, se implementó una interfaz LogService en el paquete port, que define métodos para diferentes niveles de registros de log: Debug, Info, Warn y Error. Este servicio se implementó utilizando slog en el paquete infraestructure. Durante el desarrollo y pruebas, utilizamos GoMock para simular el comportamiento del servicio de registro y asegurar que nuestras funciones se comporten correctamente cuando interactúan con el sistema de logging.
+
+#### Se crearon las siguientes pruebas unitarias
+
 - `decodeMessageService_test.go`: Pruebas unitarias para el servicio de decodificación de mensajes.
 - `triangulationService_test.go`: Pruebas unitarias para el servicio de triangulación.
 
@@ -449,6 +460,38 @@ AWS Identity and Access Management (IAM) es un servicio que permite administrar 
 - **Administrar Permisos**: Asignar políticas que especifiquen qué acciones puede realizar una identidad y en qué recursos.
 - **Configurar Autenticación Multi-Factor (MFA)**: Añadir una capa extra de seguridad mediante la configuración de autenticación de dos factores.
 
+## 8 Logs
+
+La capa de logs en este proyecto se utiliza para registrar eventos y mensajes durante la ejecución del programa, facilitando el seguimiento y la solución de problemas. Esta capa se integra estrechamente con AWS SAM para desplegar funciones Lambda que utilizan AWS CloudWatch como el backend para almacenar y visualizar los logs.
+
+### 8.1 Interfaz `LogService`
+
+La interfaz `LogService` está diseñada para proporcionar una abstracción de los diferentes niveles de severidad que se pueden registrar. Esta abstracción permite cambiar la implementación del servicio de log sin afectar el código cliente.
+
+```go
+package port
+
+type LogService interface {
+    Debug(msg string, args ...any)
+    Info(msg string, args ...any)
+    Warn(msg string, args ...any)
+    Error(msg string, args ...any)
+}
+```
+### 8.2 Implementación del `LogService`
+
+La implementación del `LogService` se encuentra en el paquete `infraestructure` y utiliza la biblioteca estándar `slog` para manejar los registros. Esta implementación configura un `JSONHandler` para formatear los logs y enviarlos a la salida estándar (`os.Stdout`). Esta práctica se recomienda en las aplicaciones desplegadas en AWS Lambda, ya que CloudWatch Logs recopila automáticamente los registros enviados a la salida estándar.
+
+### 8.3 Integración con AWS SAM y CloudWatch
+La capa de logs está diseñada para integrarse con AWS SAM, lo que facilita el despliegue y la gestión de los recursos de AWS. Con SAM, se puede definir la función Lambda y configurar cómo se manejan los logs en el archivo template.yaml.
+
+### 8.4 Visualización de Logs en CloudWatch
+Una vez desplegada la función Lambda, los logs se envían automáticamente a AWS CloudWatch Logs. CloudWatch proporciona herramientas para visualizar, filtrar y analizar los logs, lo que facilita el monitoreo de la aplicación y la detección de problemas.
+
+Beneficios de Utilizar CloudWatch
+Centralización de Logs: CloudWatch almacena todos los logs de las funciones Lambda en un solo lugar, lo que facilita el acceso y la gestión.
+Escalabilidad: CloudWatch está diseñado para manejar grandes volúmenes de logs, lo que lo hace ideal para aplicaciones de cualquier tamaño.
+Flexibilidad: Los usuarios pueden ajustar los niveles de log, crear alarmas, y analizar los logs en tiempo real, lo que proporciona una mayor flexibilidad en el monitoreo y la solución de problemas.
 
 
 
