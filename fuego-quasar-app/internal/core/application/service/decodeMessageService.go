@@ -22,8 +22,10 @@ func NewDecodeMessageService(logService port.LogService) port.DecodeMessageServi
 }
 
 func (mp DecodeMessageService) GetMessage(message [][]string) (string, error) {
+	mp.logService.Info("GetMessage", "message", message)
 	messageSize := getMessageLength(message)
 	if messageSize == 0 {
+		mp.logService.Error("message length is zero")
 		return "", fmt.Errorf("message length is zero")
 	}
 
@@ -37,6 +39,7 @@ func (mp DecodeMessageService) GetMessage(message [][]string) (string, error) {
 
 	result := strings.Join(messageCandidateWords, " ")
 	if strings.TrimSpace(result) == "" {
+		mp.logService.Error("resulting message is empty")
 		return "", fmt.Errorf("resulting message is empty")
 	}
 

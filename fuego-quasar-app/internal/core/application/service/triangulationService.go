@@ -12,10 +12,11 @@ type TriangulationService struct {
 }
 
 func NewTriangulationService(logService port.LogService) port.TriangulationService {
+
 	return TriangulationService{logService: logService}
 }
 func (t TriangulationService) GetLocation(p1, p2, p3 model.Point, d1, d2, d3 float64) (model.Point, error) {
-
+	t.logService.Info("GetLocation", "p1", p1, "p2", p2, "p3", p3, "d1", d1, "d2", d2, "d3", d3)
 	// Construcción de las ecuaciones
 	A := 2 * (p2.X - p1.X)
 	B := 2 * (p2.Y - p1.Y)
@@ -27,6 +28,7 @@ func (t TriangulationService) GetLocation(p1, p2, p3 model.Point, d1, d2, d3 flo
 	// Determinante del sistema
 	denominator := A*E - B*D
 	if denominator == 0 {
+		t.logService.Error("no hay solución válida para encontrar su ubicacion", "denominator", denominator)
 		return model.Point{}, errors.New("no hay solución válida para encontrar su ubicacion")
 	}
 
@@ -38,6 +40,7 @@ func (t TriangulationService) GetLocation(p1, p2, p3 model.Point, d1, d2, d3 flo
 	distanceToP3 := math.Sqrt(math.Pow(x-p3.X, 2) + math.Pow(y-p3.Y, 2))
 	valDis := distanceToP3 - d3
 	if math.Abs(valDis) > 1e-2 {
+		t.logService.Error("no hay solución válida para encontrar su ubicacion", "valDis", valDis)
 		return model.Point{}, errors.New("no hay solución válida para encontrar su ubicacion")
 	}
 

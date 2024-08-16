@@ -24,7 +24,7 @@ func InitializeMyService() handler.LambdaHandler {
 	secretManagerService := awsSecret.NewAWSSecretManagerService()
 	client := mongodb.NewMongoClient(secretManagerService)
 	satelliteRepository := repository.NewSatelliteRepositoryMongo(client)
-	fuegoQuasarService := service.NewFuegoQuasarService(satelliteRepository, decodeMessageService, triangulationService)
+	fuegoQuasarService := service.NewFuegoQuasarService(logService, satelliteRepository, decodeMessageService, triangulationService)
 	lambdaHandler := handler.NewLambdaHandler(logService, triangulationService, decodeMessageService, secretManagerService, satelliteRepository, fuegoQuasarService)
 	return lambdaHandler
 }

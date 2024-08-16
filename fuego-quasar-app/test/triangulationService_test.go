@@ -3,14 +3,19 @@ package service
 import (
 	"fuego-quasar-app/internal/core/application/service"
 	"fuego-quasar-app/internal/core/domain/model"
-	infraestructure "fuego-quasar-app/internal/infrastructure/log"
 	"testing"
 
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTriangulationService_GetLocation(t *testing.T) {
-	service := service.NewTriangulationService(infraestructure.NewLog())
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	log := NewMockLogService(ctrl)
+
+	service := service.NewTriangulationService(log)
 
 	tests := []struct {
 		name       string

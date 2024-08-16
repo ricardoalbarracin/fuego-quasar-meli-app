@@ -14,10 +14,11 @@ type FuegoQuasarService struct {
 	satelliteRepository  port.SatelliteRepository
 	decodeMessageService port.DecodeMessageService
 	triangulationService port.TriangulationService
+	logService           port.LogService
 }
 
-func NewFuegoQuasarService(satelliteRepository port.SatelliteRepository, decodeMessageService port.DecodeMessageService, triangulationService port.TriangulationService) port.FuegoQuasarService {
-	return FuegoQuasarService{satelliteRepository: satelliteRepository, decodeMessageService: decodeMessageService, triangulationService: triangulationService}
+func NewFuegoQuasarService(logService port.LogService, satelliteRepository port.SatelliteRepository, decodeMessageService port.DecodeMessageService, triangulationService port.TriangulationService) port.FuegoQuasarService {
+	return FuegoQuasarService{logService: logService, satelliteRepository: satelliteRepository, decodeMessageService: decodeMessageService, triangulationService: triangulationService}
 }
 
 func (t FuegoQuasarService) ProcessSplitMessage(satellite model.Satellites) error {
@@ -30,17 +31,13 @@ func (t FuegoQuasarService) ProcessSplitMessage(satellite model.Satellites) erro
 
 func (t FuegoQuasarService) ProcessSaveMessages() (model.Response, error) {
 
+	t.logService.Info("ProcessSaveMessages")
 	namesSatellites := []string{"kenobi", "skywalker", "sato"}
 	satellites, _ := t.satelliteRepository.FindByNames(namesSatellites)
 
 	numMessage := len(satellites)
 	if numMessage < 3 {
-		for _, satellite := range satellites {
-			fmt.Printf("Satellite Name : %s\n", satellite.Name)
-			fmt.Printf("Distance: %f\n", satellite.Distance)
-			fmt.Printf("Message: %v\n", satellite.Message)
-			fmt.Println("------------------------------")
-		}
+		t.logService.Error("no hay suficiente información", "satellites", satellites)
 		errorMessage := fmt.Sprintf("no hay suficiente información %d", numMessage)
 		return model.Response{}, errors.New(errorMessage)
 	}
@@ -51,22 +48,28 @@ func (t FuegoQuasarService) ProcessSaveMessages() (model.Response, error) {
 	}
 	message, err := t.decodeMessageService.GetMessage(messages)
 	if err != nil {
+		t.logService.Error("error decodeMessageService", "Error", err)
 		return model.Response{}, err
 	}
 	p1, p2, p3, err := t.GetSatellitesPoints()
 	if err != nil {
+		t.logService.Error("error GetSatellitesPoints", "Error", err)
 		return model.Response{}, err
 	}
 	d1, err := t.FilterSatelliteByName(satellites, "kenobi")
 	if err != nil {
+		t.logService.Error("error FilterSatelliteByName kenobi", "Error", err)
 		return model.Response{}, err
 	}
 	d2, err := t.FilterSatelliteByName(satellites, "skywalker")
 	if err != nil {
+		t.logService.Error("error FilterSatelliteByName skywalker", "Error", err)
 		return model.Response{}, err
 	}
 	d3, err := t.FilterSatelliteByName(satellites, "sato")
 	if err != nil {
+
+		t.logService.Error("error FilterSatelliteByName sato", "Error", err)
 		return model.Response{}, err
 	}
 	position, err := t.triangulationService.GetLocation(p1, p2, p3, d1.Distance, d2.Distance, d3.Distance)
@@ -81,6 +84,7 @@ func (t FuegoQuasarService) ProcessSaveMessages() (model.Response, error) {
 func (t FuegoQuasarService) ProcessMessages(satellites []model.Satellites) (model.Response, error) {
 
 	if len(satellites) < 3 {
+		t.logService.Error("error o hay suficiente información", "Error", "satellites", satellites)
 		return model.Response{}, errors.New("no hay suficiente información")
 	}
 	var messages [][]string
